@@ -1,5 +1,5 @@
 {
-  "updateMethod": "replace",
+  "updateMethod": "overwrite",
   "shortcuts": [
     {
       "id": "alacritty",

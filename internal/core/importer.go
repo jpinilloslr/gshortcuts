@@ -27,7 +27,7 @@ func (i *Importer) ImportFromJson(fileName string) error {
 	}
 
 	for _, shortcut := range config.Shortcuts {
-		if err := i.manager.Create(
+		if err := i.manager.Set(
 			shortcut.Id,
 			shortcut.Name,
 			shortcut.Command,

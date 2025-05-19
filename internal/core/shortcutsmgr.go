@@ -19,14 +19,14 @@ func NewShortcutsMgr(logger *slog.Logger) *ShortcutsMgr {
 	}
 }
 
-func (s *ShortcutsMgr) Create(id, name, command, binding string) error {
+func (s *ShortcutsMgr) Set(id, name, command, binding string) error {
 	exists, err := s.exists(id)
 	if err != nil {
 		return err
 	}
 
 	if exists {
-		return fmt.Errorf("shortcut with id %s already exists", id)
+		return s.setParams(id, name, command, binding)
 	}
 
 	if err := s.addEntry(id); err != nil {
@@ -56,7 +56,15 @@ func (s *ShortcutsMgr) getEntries() ([]string, error) {
 	untrimmed := strings.Split(matches[1], ",")
 	items := make([]string, 0, len(untrimmed))
 	for _, item := range untrimmed {
-		items = append(items, strings.TrimSpace(item))
+		value := strings.TrimSpace(
+			strings.Trim(
+				strings.TrimSpace(item),
+				"'",
+			),
+		)
+		if value != "" {
+			items = append(items, value)
+		}
 	}
 
 	return items, nil
@@ -73,8 +81,13 @@ func (s *ShortcutsMgr) addEntry(id string) error {
 		return nil
 	}
 
-	items = append(items, "'"+path+"'")
-	data := "[" + strings.Join(items, ", ") + "]"
+	items = append(items, path)
+	quotedItems := make([]string, 0, len(items))
+	for _, item := range items {
+		quotedItems = append(quotedItems, "'"+item+"'")
+	}
+
+	data := "[" + strings.Join(quotedItems, ", ") + "]"
 
 	return exec.Command(
 		"gsettings",
@@ -92,12 +105,13 @@ func (s *ShortcutsMgr) exists(id string) (bool, error) {
 		return false, err
 	}
 
-	if slices.Contains(items, "'"+path+"'") {
+	if slices.Contains(items, path) {
 		return true, nil
 	}
 
 	return false, nil
 }
+
 func (s *ShortcutsMgr) setParams(id, name, command, binding string) error {
 	path := s.getEntryPath(id)
 	schema := fmt.Sprintf(
@@ -116,6 +130,27 @@ func (s *ShortcutsMgr) setParams(id, name, command, binding string) error {
 		}
 	}
 	return nil
+}
+
+func (s *ShortcutsMgr) getParam(schema, key string) (string, error) {
+	cmd := exec.Command("gsettings",
+		"get", schema, key,
+	)
+	if err := cmd.Run(); err != nil {
+		return "", err
+	}
+	data, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+
+	value := strings.TrimSpace(
+		strings.Trim(
+			strings.TrimSpace(string(data)),
+			"'",
+		),
+	)
+	return value, nil
 }
 
 func (s *ShortcutsMgr) getEntryPath(id string) string {
