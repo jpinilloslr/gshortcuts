@@ -14,13 +14,13 @@ func NewImporter() *Importer {
 	}
 }
 
-func (i *Importer) Import(fileName, strategy string) error {
+func (i *Importer) Import(fileName string, strategy ImportStrategy) error {
 	shortcuts, err := i.codec.Decode(fileName)
 	if err != nil {
 		return err
 	}
 
-	if strategy == "override" {
+	if strategy == Replace {
 		if err := i.manager.DeleteAll(); err != nil {
 			return err
 		}

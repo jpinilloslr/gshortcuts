@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 type ShortcutCodec struct {
@@ -16,15 +18,15 @@ func NewShortcutCodec() *ShortcutCodec {
 }
 
 func (c *ShortcutCodec) Decode(fileName string) ([]Shortcut, error) {
-	extension := strings.ToLower(filepath.Ext(fileName))
+	ext := strings.ToLower(filepath.Ext(fileName))
 
-	switch extension {
+	switch ext {
 	case ".json":
 		return c.decodeJSON(fileName)
 	case ".yaml", ".yml":
 		return c.decodeYAML(fileName)
 	default:
-		return nil, fmt.Errorf("unsupported file format: %s", extension)
+		return nil, fmt.Errorf("unsupported file format: %s", ext)
 	}
 }
 
@@ -44,5 +46,16 @@ func (l *ShortcutCodec) decodeJSON(fileName string) ([]Shortcut, error) {
 }
 
 func (l *ShortcutCodec) decodeYAML(fileName string) ([]Shortcut, error) {
-	return nil, fmt.Errorf("yaml format not supported yet")
+	file, err := os.ReadFile(fileName)
+	if err != nil {
+		return nil, err
+	}
+
+	var data []Shortcut
+	err = yaml.Unmarshal(file, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
 }
