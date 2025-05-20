@@ -1,14 +1,14 @@
 [
   {
-    "id": "alacritty",
-    "name": "Alacritty",
+    "id": "terminal",
+    "name": "Terminal",
     "binding": "<Shift><Control>t",
-    "command": "alacritty"
+    "command": "ptyxis"
   },
   {
-    "id": "alacritty-tmux",
-    "name": "Alacritty & Tmux",
+    "id": "terminal-with-tmux",
+    "name": "Terminal & Tmux",
     "binding": "<Alt><Control>t",
-    "command": "alacritty -e tmux"
+    "command": "ptyxis -e tmux"
   }
 ]
