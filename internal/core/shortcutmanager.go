@@ -15,6 +15,24 @@ func NewShortcutManager() *ShortcutManager {
 	return &ShortcutManager{}
 }
 
+func (s *ShortcutManager) GetAll() ([]Shortcut, error) {
+	entries, err := s.getEntries()
+	if err != nil {
+		return nil, err
+	}
+
+	shortcuts := make([]Shortcut, 0, len(entries))
+	for _, entry := range entries {
+		shortcut, err := s.getShortcut(entry)
+		if err != nil {
+			return nil, err
+		}
+		shortcuts = append(shortcuts, *shortcut)
+	}
+
+	return shortcuts, nil
+}
+
 func (s *ShortcutManager) Set(shortcut *Shortcut) error {
 	exists, err := s.exists(shortcut.Id)
 	if err != nil {
@@ -119,10 +137,7 @@ func (s *ShortcutManager) exists(id string) (bool, error) {
 
 func (s *ShortcutManager) setParams(shortcut *Shortcut) error {
 	path := s.getEntryPath(shortcut.Id)
-	schema := fmt.Sprintf(
-		"org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:%s",
-		path,
-	)
+	schema := s.getSchema(path)
 
 	for key, val := range map[string]string{
 		"name":    shortcut.Name,
@@ -136,6 +151,40 @@ func (s *ShortcutManager) setParams(shortcut *Shortcut) error {
 		}
 	}
 	return nil
+}
+
+func (s *ShortcutManager) getShortcut(path string) (*Shortcut, error) {
+	schema := s.getSchema(path)
+
+	var (
+		name    string
+		command string
+		binding string
+	)
+
+	for key, val := range map[string]*string{
+		"name":    &name,
+		"command": &command,
+		"binding": &binding,
+	} {
+		value, err := s.getParam(schema, key)
+		if err != nil {
+			return nil, err
+		}
+		*val = value
+	}
+
+	id, err := s.getIdFromSchema(schema)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Shortcut{
+		Id:      id,
+		Name:    name,
+		Command: command,
+		Binding: binding,
+	}, nil
 }
 
 func (s *ShortcutManager) getParam(schema, key string) (string, error) {
@@ -158,8 +207,27 @@ func (s *ShortcutManager) getParam(schema, key string) (string, error) {
 	return value, nil
 }
 
+func (s *ShortcutManager) getSchema(path string) string {
+	return fmt.Sprintf(
+		"org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:%s",
+		path,
+	)
+}
+
 func (s *ShortcutManager) getEntryPath(id string) string {
 	return fmt.Sprintf(
+
 		"/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/%s/",
 		id)
+}
+
+func (s *ShortcutManager) getIdFromSchema(schema string) (string, error) {
+	re := regexp.MustCompile(`custom-keybindings/(.*)/$`)
+	matches := re.FindStringSubmatch(schema)
+
+	if len(matches) < 1 {
+		return "", nil
+	}
+
+	return matches[1], nil
 }
