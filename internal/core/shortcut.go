@@ -6,8 +6,3 @@ type Shortcut struct {
 	Binding string
 	Command string
 }
-
-type ShortcutsConfig struct {
-	UpdateMethod string
-	Shortcuts    []Shortcut
-}

@@ -2,41 +2,46 @@ package core
 
 import (
 	"fmt"
-	"log/slog"
 	"os/exec"
 	"regexp"
 	"slices"
 	"strings"
 )
 
-type ShortcutsMgr struct {
-	logger *slog.Logger
+type ShortcutManager struct {
 }
 
-func NewShortcutsMgr(logger *slog.Logger) *ShortcutsMgr {
-	return &ShortcutsMgr{
-		logger: logger,
-	}
+func NewShortcutManager() *ShortcutManager {
+	return &ShortcutManager{}
 }
 
-func (s *ShortcutsMgr) Set(id, name, command, binding string) error {
-	exists, err := s.exists(id)
+func (s *ShortcutManager) Set(shortcut *Shortcut) error {
+	exists, err := s.exists(shortcut.Id)
 	if err != nil {
 		return err
 	}
 
-	if exists {
-		return s.setParams(id, name, command, binding)
+	if !exists {
+		if err := s.addEntry(shortcut.Id); err != nil {
+			return err
+		}
 	}
 
-	if err := s.addEntry(id); err != nil {
-		return err
-	}
-	return s.setParams(id, name, command, binding)
+	return s.setParams(shortcut)
 }
 
-func (s *ShortcutsMgr) getEntries() ([]string, error) {
-	out, err := exec.Command("gsettings",
+func (s *ShortcutManager) DeleteAll() error {
+	return exec.Command(
+		"gsettings",
+		"reset",
+		"org.gnome.settings-daemon.plugins.media-keys",
+		"custom-keybindings",
+	).Run()
+}
+
+func (s *ShortcutManager) getEntries() ([]string, error) {
+	out, err := exec.Command(
+		"gsettings",
 		"get",
 		"org.gnome.settings-daemon.plugins.media-keys",
 		"custom-keybindings",
@@ -70,7 +75,7 @@ func (s *ShortcutsMgr) getEntries() ([]string, error) {
 	return items, nil
 }
 
-func (s *ShortcutsMgr) addEntry(id string) error {
+func (s *ShortcutManager) addEntry(id string) error {
 	path := s.getEntryPath(id)
 	items, err := s.getEntries()
 	if err != nil {
@@ -98,7 +103,7 @@ func (s *ShortcutsMgr) addEntry(id string) error {
 	).Run()
 }
 
-func (s *ShortcutsMgr) exists(id string) (bool, error) {
+func (s *ShortcutManager) exists(id string) (bool, error) {
 	path := s.getEntryPath(id)
 	items, err := s.getEntries()
 	if err != nil {
@@ -112,16 +117,17 @@ func (s *ShortcutsMgr) exists(id string) (bool, error) {
 	return false, nil
 }
 
-func (s *ShortcutsMgr) setParams(id, name, command, binding string) error {
-	path := s.getEntryPath(id)
+func (s *ShortcutManager) setParams(shortcut *Shortcut) error {
+	path := s.getEntryPath(shortcut.Id)
 	schema := fmt.Sprintf(
 		"org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:%s",
 		path,
 	)
+
 	for key, val := range map[string]string{
-		"name":    name,
-		"command": command,
-		"binding": binding,
+		"name":    shortcut.Name,
+		"command": shortcut.Command,
+		"binding": shortcut.Binding,
 	} {
 		if err := exec.Command("gsettings",
 			"set", schema, key, val,
@@ -132,14 +138,13 @@ func (s *ShortcutsMgr) setParams(id, name, command, binding string) error {
 	return nil
 }
 
-func (s *ShortcutsMgr) getParam(schema, key string) (string, error) {
-	cmd := exec.Command("gsettings",
-		"get", schema, key,
-	)
-	if err := cmd.Run(); err != nil {
-		return "", err
-	}
-	data, err := cmd.Output()
+func (s *ShortcutManager) getParam(schema, key string) (string, error) {
+	data, err := exec.Command(
+		"gsettings",
+		"get",
+		schema,
+		key,
+	).Output()
 	if err != nil {
 		return "", err
 	}
@@ -153,7 +158,7 @@ func (s *ShortcutsMgr) getParam(schema, key string) (string, error) {
 	return value, nil
 }
 
-func (s *ShortcutsMgr) getEntryPath(id string) string {
+func (s *ShortcutManager) getEntryPath(id string) string {
 	return fmt.Sprintf(
 		"/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/%s/",
 		id)

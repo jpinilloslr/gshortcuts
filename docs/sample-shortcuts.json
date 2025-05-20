@@ -1,0 +1,14 @@
+[
+  {
+    "id": "alacritty",
+    "name": "Alacritty",
+    "binding": "<Shift><Control>t",
+    "command": "alacritty"
+  },
+  {
+    "id": "alacritty-tmux",
+    "name": "Alacritty & Tmux",
+    "binding": "<Alt><Control>t",
+    "command": "alacritty -e tmux"
+  }
+]

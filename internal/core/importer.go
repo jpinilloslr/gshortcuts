@@ -1,42 +1,37 @@
 package core
 
-import (
-	"log/slog"
-)
+import "fmt"
 
 type Importer struct {
-	logger  *slog.Logger
-	manager *ShortcutsMgr
-	loader  *ShortcutsLoader
+	codec   *ShortcutCodec
+	manager *ShortcutManager
 }
 
-func NewImporter(
-	logger *slog.Logger,
-) *Importer {
+func NewImporter() *Importer {
 	return &Importer{
-		logger:  logger,
-		manager: NewShortcutsMgr(logger),
-		loader:  NewShortcutsLoader(logger),
+		codec:   NewShortcutCodec(),
+		manager: NewShortcutManager(),
 	}
 }
 
-func (i *Importer) ImportFromJson(fileName string) error {
-	config, err := i.loader.LoadJson(fileName)
+func (i *Importer) Import(fileName, strategy string) error {
+	shortcuts, err := i.codec.Decode(fileName)
 	if err != nil {
 		return err
 	}
 
-	for _, shortcut := range config.Shortcuts {
-		if err := i.manager.Set(
-			shortcut.Id,
-			shortcut.Name,
-			shortcut.Command,
-			shortcut.Binding,
-		); err != nil {
-			i.logger.Error("Failed to set shortcut", "id", shortcut.Id, "err", err)
-			continue
+	if strategy == "override" {
+		if err := i.manager.DeleteAll(); err != nil {
+			return err
 		}
-		i.logger.Info("Installed shortcut", "id", shortcut.Id, "binding", shortcut.Binding)
+		fmt.Println("Deleted all existing shortcuts")
+	}
+
+	for _, shortcut := range shortcuts {
+		if err := i.manager.Set(&shortcut); err != nil {
+			return err
+		}
+		fmt.Printf("Imported shortcut: %s\n", shortcut.Name)
 	}
 
 	return nil
