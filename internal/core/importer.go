@@ -36,3 +36,11 @@ func (i *Importer) Import(fileName string, strategy ImportStrategy) error {
 
 	return nil
 }
+
+func (i *Importer) Reset() error {
+	if err := i.manager.DeleteAll(); err != nil {
+		return err
+	}
+	fmt.Println("Deleted all existing shortcuts")
+	return nil
+}
