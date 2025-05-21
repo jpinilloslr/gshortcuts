@@ -23,9 +23,10 @@ jobs:
         run: make
 
       - name: Create GitHub Release
-        uses: comnoco/create-release@v2
+        uses: softprops/action-gh-release@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           files: |
             bin/gshortcuts-linux-amd64
             bin/gshortcuts-linux-arm64
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
