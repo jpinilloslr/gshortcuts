@@ -24,8 +24,6 @@ This tool helps you manage your custom keyboard shortcuts in GNOME-based desktop
 curl -sSL https://gshortcuts.jpinillos.dev/install.sh | bash
 ```
 
-Ensure your `$GOPATH/bin` or `$HOME/go/bin` directory is in your system's `PATH` to run the installed binary.
-
 ### From source (for development or specific versions)
 
 If you prefer to build from source or want to install a specific version from a clone:
