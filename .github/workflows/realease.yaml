@@ -28,5 +28,3 @@ jobs:
           files: |
             bin/gshortcuts-linux-amd64
             bin/gshortcuts-linux-arm64
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
