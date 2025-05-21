@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://github.com/jpinilloslr/gshortcuts/actions/workflows/build.yaml/badge.svg?branch=master)](https://github.com/jpinilloslr/gshortcuts/actions/workflows/build.yaml)
 
-`gshortcuts` is a command-line tool to manage your GNOME custom shortcuts. Easily import and reset your custom shortcuts from a configuration file.
+`gshortcuts` is a command-line tool to manage your GNOME custom shortcuts. Easily import and export your custom shortcuts using YAML or JSON files.
 
 ## Overview
 
@@ -20,8 +20,18 @@ This tool helps you manage your custom keyboard shortcuts in GNOME-based desktop
 
 ## Installation
 
+### Standalone binary
+
 ```bash
 curl -sSL https://gshortcuts.jpinillos.dev/install.sh | bash
+```
+
+### Alternative: Install via Go
+
+If you have Go installed and prefer to install from source or use a pinned version:
+
+```bash
+go install github.com/jpinilloslr/gshortcuts/cmd/gshortcuts@latest
 ```
 
 ### From source (for development or specific versions)
@@ -48,12 +58,12 @@ If you prefer to build from source or want to install a specific version from a 
 The main command is `gshortcuts`.
 
 ```
-A command line tool to manage your custom shortcuts in Gnome
+A command line tool to manage your custom shortcuts in GNOME
 ```
 
 ### Commands
 
-- `import`: Imports shortcuts from a specified file.
+- `import`: Imports custom shortcuts from a specified file.
 
   ```bash
   gshortcuts import /path/to/your/shortcuts.yaml
@@ -65,33 +75,22 @@ A command line tool to manage your custom shortcuts in Gnome
   - [`docs/sample-shortcuts.yaml`](docs/sample-shortcuts.yaml)
   - [`docs/sample-shortcuts.json`](docs/sample-shortcuts.json)
 
-- `reset`: Resets all custom shortcuts managed by this tool or specific ones.
+- `export`: Exports custom shortcuts to a specified file.
+
+  ```bash
+  gshortcuts export /path/to/your/shortcuts.yaml
+  gshortcuts export /path/to/your/shortcuts.json
+  ```
+
+- `reset`: Resets all custom shortcuts.
 
 For more information on each command, use the `-h` or `--help` flag:
 
 ```bash
 gshortcuts import --help
+gshortcuts export --help
 gshortcuts reset --help
 ```
-
-## Building from Source
-
-If you want to build the project from source:
-
-```bash
-make build
-```
-
-This command will:
-
-1.  Run `go vet` to check for suspicious constructs.
-2.  Build the `gshortcuts` binary into the `bin/` directory.
-
-Other `make` commands available:
-
-- `make run`: Runs the application.
-- `make clean`: Removes the `bin/` directory.
-- `make install`: Builds and installs the application to your Go bin path.
 
 ## Configuration File Format
 
@@ -104,6 +103,7 @@ Shortcuts should be defined in a YAML or JSON file. Here's an example structure 
   name: "Open Terminal"
   command: "gnome-terminal"
   binding: "<Super>t"
+
 - id: "firefox"
   name: "Open Browser"
   command: "firefox"
