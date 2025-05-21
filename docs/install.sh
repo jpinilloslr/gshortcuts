@@ -22,16 +22,17 @@ VERSION=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" \
 
 echo "Installing $BINARY $VERSION for $OS/$ARCH..."
 
-URL="https://github.com/$REPO/releases/download/$VERSION/${BINARY}-${OS}-${ARCH}.tar.gz"
+# Construct download URL
+URL="https://github.com/$REPO/releases/download/$VERSION/${BINARY}-${OS}-${ARCH}"
 
 # Create install dir
 mkdir -p "$INSTALL_DIR"
 
-# Download and extract
-curl -L "$URL" | tar -xz -C "$INSTALL_DIR"
+# Download the binary
+curl -L -o "$INSTALL_DIR/$BINARY" "$URL"
 chmod +x "$INSTALL_DIR/$BINARY"
 
-# Ensure it's in PATH
+# Check PATH
 if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
   echo "⚠️  $INSTALL_DIR is not in your PATH."
   echo "Add this to your shell config, e.g.:"
@@ -39,4 +40,3 @@ if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
 else
   echo "✅ Installed: $INSTALL_DIR/$BINARY"
 fi
-
