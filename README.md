@@ -4,6 +4,7 @@
 
 [![Go Version](https://img.shields.io/badge/go-1.24-blue.svg)](https://golang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://github.com/jpinilloslr/gshortcuts/actions/workflows/build.yaml/badge.svg?branch=master)](https://github.com/jpinilloslr/gshortcuts/actions/workflows/build.yaml)
 
 `gshortcuts` is a command-line tool to manage your GNOME custom shortcuts. Easily import and reset your custom shortcuts from a configuration file.
 
