@@ -1,5 +1,7 @@
 # gshortcuts
 
+> **Note:** This project is in early development. Please check back in a few days for updates.
+
 [![Go Version](https://img.shields.io/badge/go-1.24-blue.svg)](https://golang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
