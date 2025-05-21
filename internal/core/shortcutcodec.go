@@ -30,6 +30,17 @@ func (c *ShortcutCodec) Decode(fileName string) ([]Shortcut, error) {
 	}
 }
 
+func (c *ShortcutCodec) Encode(shortcuts []Shortcut, fileName string) error {
+	ext := strings.ToLower(filepath.Ext(fileName))
+
+	switch ext {
+	case ".json":
+		return c.encodeJSON(shortcuts, fileName)
+	default:
+		return c.encodeYAML(shortcuts, fileName)
+	}
+}
+
 func (l *ShortcutCodec) decodeJSON(fileName string) ([]Shortcut, error) {
 	file, err := os.ReadFile(fileName)
 	if err != nil {
@@ -45,6 +56,20 @@ func (l *ShortcutCodec) decodeJSON(fileName string) ([]Shortcut, error) {
 	return data, nil
 }
 
+func (l *ShortcutCodec) encodeJSON(shortcuts []Shortcut, fileName string) error {
+	data, err := json.MarshalIndent(shortcuts, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(fileName, data, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (l *ShortcutCodec) decodeYAML(fileName string) ([]Shortcut, error) {
 	file, err := os.ReadFile(fileName)
 	if err != nil {
@@ -58,4 +83,18 @@ func (l *ShortcutCodec) decodeYAML(fileName string) ([]Shortcut, error) {
 	}
 
 	return data, nil
+}
+
+func (l *ShortcutCodec) encodeYAML(shortcuts []Shortcut, fileName string) error {
+	data, err := yaml.Marshal(shortcuts)
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(fileName, data, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

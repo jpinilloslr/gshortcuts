@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>gshortcuts</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-C9CJ26KHZ7"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-C9CJ26KHZ7");
+    </script>
+  </head>
+  <body>
+    <header>
+      <h1>gshortcuts</h1>
+      <p>Import and export your GNOME custom keyboard shortcuts with ease.</p>
+      <a href="#install" class="btn">Get Started</a>
+      <a href="https://github.com/jpinilloslr/gshortcuts/" class="btn"
+        >GitHub</a
+      >
+    </header>
+
+    <section id="features">
+      <h2>Features</h2>
+      <div class="features">
+        <div class="feature">
+          <h3>Import &amp; Export</h3>
+          <p>Backup and restore your custom GNOME shortcuts effortlessly.</p>
+        </div>
+        <div class="feature">
+          <h3>Merge Strategies</h3>
+          <p>Override or merge shortcuts with existing ones.</p>
+        </div>
+        <div class="feature">
+          <h3>Multi-Format Support</h3>
+          <p>Import and export shortcuts in YAML and JSON formats.</p>
+        </div>
+        <div class="feature">
+          <h3>Lightweight</h3>
+          <p>No dependencies, simple CLI interface.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="install">
+      <h2>Installation</h2>
+      <pre><code>go install github.com/jpinilloslr/gshortcuts/cmd/gshortcuts@latest</code></pre>
+    </section>
+
+    <section id="usage">
+      <h2>Usage</h2>
+      <pre><code># Export shortcuts to a YAML file
+  gshortcuts export shortcuts.yaml
+
+# Export shortcuts to a JSON file
+  gshortcuts export shortcuts.json
+
+# Import shortcuts with merge strategy
+  gshortcuts import shortcuts.yaml --strategy=merge
+
+# Override existing shortcuts
+  gshortcuts import shortcuts.yaml --strategy=override
+          </code></pre>
+    </section>
+
+    <footer>
+      <p>
+        &copy; 2025 Joaquin Pinillos.
+        <a href="https://github.com/jpinilloslr/gshortcuts/">View on GitHub</a>.
+      </p>
+    </footer>
+  </body>
+</html>
