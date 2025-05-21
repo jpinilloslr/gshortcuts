@@ -20,10 +20,8 @@ This tool helps you manage your custom keyboard shortcuts in GNOME-based desktop
 
 ## Installation
 
-The recommended way to install `gshortcuts` is using `go install`:
-
 ```bash
-go install github.com/jpinilloslr/gshortcuts/cmd/gshortcuts@latest
+curl -sSL https://gshortcuts.jpinillos.dev/install.sh | bash
 ```
 
 Ensure your `$GOPATH/bin` or `$HOME/go/bin` directory is in your system's `PATH` to run the installed binary.
