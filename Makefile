@@ -7,7 +7,8 @@ all: build
 
 build:
 	go vet ./...
-	go build -o bin/$(BINARY) $(CMD_PATH)
+	GOARCH=amd64 go build -o "bin/$(BINARY)-linux-amd64" $(CMD_PATH)
+	GOARCH=arm64 go build -o "bin/$(BINARY)-linux-arm64" $(CMD_PATH)
 
 run:
 	go run $(CMD_PATH)
