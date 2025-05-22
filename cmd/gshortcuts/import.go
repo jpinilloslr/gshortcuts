@@ -36,10 +36,12 @@ func init() {
 		strategies[0],
 		fmt.Sprintf("Import strategy (%s)", strings.Join(strategies, ", ")),
 	)
+
+	importCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Enable verbose output")
 	rootCmd.AddCommand(importCmd)
 }
 
 func importShortcuts(fileName string, strategy core.ImportStrategy) error {
 	importer := core.NewImporter()
-	return importer.Import(fileName, strategy)
+	return importer.Import(fileName, strategy, verbose)
 }

@@ -1,6 +1,9 @@
 package core
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/fatih/color"
+)
 
 type Exporter struct {
 	codec   *ShortcutCodec
@@ -14,7 +17,7 @@ func NewExporter() *Exporter {
 	}
 }
 
-func (i *Exporter) Export(fileName string) error {
+func (i *Exporter) Export(fileName string, verbose bool) error {
 	shortcuts, err := i.manager.GetAll()
 	if err != nil {
 		return err
@@ -24,11 +27,17 @@ func (i *Exporter) Export(fileName string) error {
 		return err
 	}
 
-	for _, shortcut := range shortcuts {
-		fmt.Printf("Exported shortcut: %s\n", shortcut.Name)
-		fmt.Printf("\tCommand: %s\n", shortcut.Command)
-		fmt.Printf("\tBinding: %s\n", shortcut.Binding)
+	if verbose {
+		for _, shortcut := range shortcuts {
+			fmt.Printf("Exported shortcut: %s\n", shortcut.Name)
+			fmt.Printf("\tCommand: %s\n", shortcut.Command)
+			fmt.Printf("\tBinding: %s\n", shortcut.Binding)
+		}
+		fmt.Println()
 	}
+
+	fmt.Printf("%s Exported %d shortcuts to %s\n",
+		color.GreenString("✔"), len(shortcuts), fileName)
 
 	return nil
 }

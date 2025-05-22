@@ -7,6 +7,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var verbose bool
+
 var rootCmd = &cobra.Command{
 	Use:   "gshortcuts",
 	Short: "A command line tool to manage your shortcuts in Gnome",

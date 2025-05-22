@@ -1,6 +1,10 @@
 package core
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/fatih/color"
+)
 
 type Importer struct {
 	codec   *ShortcutCodec
@@ -14,7 +18,7 @@ func NewImporter() *Importer {
 	}
 }
 
-func (i *Importer) Import(fileName string, strategy ImportStrategy) error {
+func (i *Importer) Import(fileName string, strategy ImportStrategy, verbose bool) error {
 	shortcuts, err := i.codec.Decode(fileName)
 	if err != nil {
 		return err
@@ -31,8 +35,19 @@ func (i *Importer) Import(fileName string, strategy ImportStrategy) error {
 		if err := i.manager.Set(&shortcut); err != nil {
 			return err
 		}
-		fmt.Printf("Imported shortcut: %s\n", shortcut.Name)
+		if verbose {
+			fmt.Printf("Imported shortcut: %s\n", shortcut.Name)
+			fmt.Printf("\tCommand: %s\n", shortcut.Command)
+			fmt.Printf("\tBinding: %s\n", shortcut.Binding)
+		}
 	}
+
+	if verbose {
+		fmt.Println()
+	}
+
+	fmt.Printf("%s Imported %d shortcuts from %s\n",
+		color.GreenString("✔"), len(shortcuts), fileName)
 
 	return nil
 }

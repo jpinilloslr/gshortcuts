@@ -15,10 +15,11 @@ var exportCmd = &cobra.Command{
 }
 
 func init() {
+	exportCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Enable verbose output")
 	rootCmd.AddCommand(exportCmd)
 }
 
 func exportShortcuts(fileName string) error {
 	exporter := core.NewExporter()
-	return exporter.Export(fileName)
+	return exporter.Export(fileName, verbose)
 }
