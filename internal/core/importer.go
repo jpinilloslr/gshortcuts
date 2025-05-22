@@ -25,6 +25,10 @@ func (i *Importer) Import(fileName string, strategy ImportStrategy, verbose bool
 	}
 
 	if strategy == Replace {
+		if !confirm("This will delete all existing shortcuts. Do you want to continue?") {
+			return fmt.Errorf("Aborded")
+		}
+
 		if err := i.manager.DeleteAll(); err != nil {
 			return err
 		}
@@ -53,6 +57,10 @@ func (i *Importer) Import(fileName string, strategy ImportStrategy, verbose bool
 }
 
 func (i *Importer) Reset() error {
+	if !confirm("This will delete all existing shortcuts. Do you want to continue?") {
+		return fmt.Errorf("Aborded")
+	}
+
 	if err := i.manager.DeleteAll(); err != nil {
 		return err
 	}
