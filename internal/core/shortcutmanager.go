@@ -204,7 +204,8 @@ func (s *ShortcutManager) getParam(schema, key string) (string, error) {
 			"'",
 		),
 	)
-	return value, nil
+
+	return s.unquote(value), nil
 }
 
 func (s *ShortcutManager) getSchema(path string) string {
@@ -230,4 +231,9 @@ func (s *ShortcutManager) getIdFromSchema(schema string) (string, error) {
 	}
 
 	return matches[1], nil
+}
+
+func (s *ShortcutManager) unquote(value string) string {
+	// TODO: We need a proper way to unescape GVariant strings
+	return strings.ReplaceAll(value, `\\`, `\`)
 }
