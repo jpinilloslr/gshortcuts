@@ -1,6 +1,7 @@
 package core
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -57,12 +58,17 @@ func (l *ShortcutCodec) decodeJSON(fileName string) ([]Shortcut, error) {
 }
 
 func (l *ShortcutCodec) encodeJSON(shortcuts []Shortcut, fileName string) error {
-	data, err := json.MarshalIndent(shortcuts, "", "  ")
+	var data bytes.Buffer
+	enc := json.NewEncoder(&data)
+	enc.SetEscapeHTML(false)
+	enc.SetIndent("", "  ")
+
+	err := enc.Encode(shortcuts)
 	if err != nil {
 		return err
 	}
 
-	err = os.WriteFile(fileName, data, 0644)
+	err = os.WriteFile(fileName, data.Bytes(), 0644)
 	if err != nil {
 		return err
 	}
