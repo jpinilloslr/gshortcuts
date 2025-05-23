@@ -4,9 +4,13 @@ import (
 	"fmt"
 	"os/exec"
 	"regexp"
-	"slices"
-	"strings"
+
+	"github.com/jpinilloslr/gshortcuts/internal/gsettings"
 )
+
+const customKeyBindings = "custom-keybindings"
+const baseSchema = "org.gnome.settings-daemon.plugins.media-keys"
+const basePath = "/org/gnome/settings-daemon/plugins/media-keys"
 
 type ShortcutManager struct {
 }
@@ -16,224 +20,111 @@ func NewShortcutManager() *ShortcutManager {
 }
 
 func (s *ShortcutManager) GetAll() ([]Shortcut, error) {
-	entries, err := s.getEntries()
+	settings, err := gsettings.New(baseSchema)
 	if err != nil {
 		return nil, err
 	}
+	defer settings.Close()
 
-	shortcuts := make([]Shortcut, 0, len(entries))
-	for _, entry := range entries {
-		shortcut, err := s.getShortcut(entry)
+	paths := settings.GetStringArray(customKeyBindings)
+
+	shortcuts := []Shortcut{}
+	for _, path := range paths {
+		current, err := s.getShortcut(path)
 		if err != nil {
 			return nil, err
 		}
-		shortcuts = append(shortcuts, *shortcut)
+		shortcuts = append(shortcuts, *current)
 	}
 
 	return shortcuts, nil
 }
 
 func (s *ShortcutManager) Set(shortcut *Shortcut) error {
-	exists, err := s.exists(shortcut.Id)
+	settings, err := gsettings.New(baseSchema)
 	if err != nil {
 		return err
 	}
+	defer settings.Close()
 
-	if !exists {
-		if err := s.addEntry(shortcut.Id); err != nil {
-			return err
-		}
+	newPath := fmt.Sprintf("%s/%s/", basePath, shortcut.Id)
+	paths := settings.GetStringArray(customKeyBindings)
+	paths = append(paths, newPath)
+
+	if err := settings.SetStringArray(customKeyBindings, paths); err != nil {
+		return err
 	}
 
-	return s.setParams(shortcut)
+	if err := s.setParams(newPath, shortcut); err != nil {
+		return err
+	}
+
+	settings.Sync()
+	return nil
 }
 
 func (s *ShortcutManager) DeleteAll() error {
 	return exec.Command(
 		"gsettings",
 		"reset",
-		"org.gnome.settings-daemon.plugins.media-keys",
-		"custom-keybindings",
+		baseSchema,
+		customKeyBindings,
 	).Run()
 }
 
-func (s *ShortcutManager) getEntries() ([]string, error) {
-	out, err := exec.Command(
-		"gsettings",
-		"get",
-		"org.gnome.settings-daemon.plugins.media-keys",
-		"custom-keybindings",
-	).Output()
-	if err != nil {
-		return nil, err
-	}
+func (s *ShortcutManager) setParams(path string, shortcut *Shortcut) error {
+	schema := fmt.Sprintf("%s.%s", baseSchema, "custom-keybinding")
 
-	data := strings.TrimSpace(string(out))
-	re := regexp.MustCompile(`\[(.*)\]`)
-	matches := re.FindStringSubmatch(data)
-
-	if len(matches) < 1 {
-		return []string{}, nil
-	}
-
-	untrimmed := strings.Split(matches[1], ",")
-	items := make([]string, 0, len(untrimmed))
-	for _, item := range untrimmed {
-		value := strings.TrimSpace(
-			strings.Trim(
-				strings.TrimSpace(item),
-				"'",
-			),
-		)
-		if value != "" {
-			items = append(items, value)
-		}
-	}
-
-	return items, nil
-}
-
-func (s *ShortcutManager) addEntry(id string) error {
-	path := s.getEntryPath(id)
-	items, err := s.getEntries()
+	settings, err := gsettings.NewWithPath(schema, path)
 	if err != nil {
 		return err
 	}
+	defer settings.Close()
 
-	if slices.Contains(items, path) {
-		return nil
+	if err := settings.SetString("name", shortcut.Name); err != nil {
+		return err
 	}
 
-	items = append(items, path)
-	quotedItems := make([]string, 0, len(items))
-	for _, item := range items {
-		quotedItems = append(quotedItems, "'"+item+"'")
+	if err := settings.SetString("command", shortcut.Command); err != nil {
+		return err
 	}
 
-	data := "[" + strings.Join(quotedItems, ", ") + "]"
-
-	return exec.Command(
-		"gsettings",
-		"set",
-		"org.gnome.settings-daemon.plugins.media-keys",
-		"custom-keybindings",
-		data,
-	).Run()
-}
-
-func (s *ShortcutManager) exists(id string) (bool, error) {
-	path := s.getEntryPath(id)
-	items, err := s.getEntries()
-	if err != nil {
-		return false, err
+	if err := settings.SetString("binding", shortcut.Binding); err != nil {
+		return err
 	}
 
-	if slices.Contains(items, path) {
-		return true, nil
-	}
-
-	return false, nil
-}
-
-func (s *ShortcutManager) setParams(shortcut *Shortcut) error {
-	path := s.getEntryPath(shortcut.Id)
-	schema := s.getSchema(path)
-
-	for key, val := range map[string]string{
-		"name":    shortcut.Name,
-		"command": shortcut.Command,
-		"binding": shortcut.Binding,
-	} {
-		if err := exec.Command("gsettings",
-			"set", schema, key, val,
-		).Run(); err != nil {
-			return err
-		}
-	}
 	return nil
 }
 
 func (s *ShortcutManager) getShortcut(path string) (*Shortcut, error) {
-	schema := s.getSchema(path)
+	schema := fmt.Sprintf("%s.%s", baseSchema, "custom-keybinding")
 
-	var (
-		name    string
-		command string
-		binding string
-	)
-
-	for key, val := range map[string]*string{
-		"name":    &name,
-		"command": &command,
-		"binding": &binding,
-	} {
-		value, err := s.getParam(schema, key)
-		if err != nil {
-			return nil, err
-		}
-		*val = value
+	settings, err := gsettings.NewWithPath(schema, path)
+	if err != nil {
+		return nil, err
 	}
+	defer settings.Close()
 
-	id, err := s.getIdFromSchema(schema)
+	id, err := s.getIdFromPath(path)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Shortcut{
 		Id:      id,
-		Name:    name,
-		Command: command,
-		Binding: binding,
+		Name:    settings.GetString("name"),
+		Command: settings.GetString("command"),
+		Binding: settings.GetString("binding"),
 	}, nil
 }
 
-func (s *ShortcutManager) getParam(schema, key string) (string, error) {
-	data, err := exec.Command(
-		"gsettings",
-		"get",
-		schema,
-		key,
-	).Output()
-	if err != nil {
-		return "", err
-	}
-
-	value := strings.TrimSpace(
-		strings.Trim(
-			strings.TrimSpace(string(data)),
-			"'",
-		),
-	)
-
-	return s.unquote(value), nil
-}
-
-func (s *ShortcutManager) getSchema(path string) string {
-	return fmt.Sprintf(
-		"org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:%s",
-		path,
-	)
-}
-
-func (s *ShortcutManager) getEntryPath(id string) string {
-	return fmt.Sprintf(
-
-		"/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/%s/",
-		id)
-}
-
-func (s *ShortcutManager) getIdFromSchema(schema string) (string, error) {
-	re := regexp.MustCompile(`custom-keybindings/(.*)/$`)
-	matches := re.FindStringSubmatch(schema)
+func (s *ShortcutManager) getIdFromPath(path string) (string, error) {
+	re := regexp.MustCompile(`/media-keys/(.*)/$`)
+	matches := re.FindStringSubmatch(path)
 
 	if len(matches) < 1 {
 		return "", nil
 	}
 
 	return matches[1], nil
-}
-
-func (s *ShortcutManager) unquote(value string) string {
-	// TODO: We need a proper way to unescape GVariant strings
-	return strings.ReplaceAll(value, `\\`, `\`)
 }
