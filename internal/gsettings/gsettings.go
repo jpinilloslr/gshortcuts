@@ -152,6 +152,12 @@ func (gs *GSettings) SetString(key string, value string) error {
 	return nil
 }
 
+func (gs *GSettings) Reset(key string) {
+	cKey := C.CString(key)
+	defer C.free(unsafe.Pointer(cKey))
+	C.g_settings_reset(gs.ptr, cKey)
+}
+
 func (gs *GSettings) Sync() {
 	cSync()
 }

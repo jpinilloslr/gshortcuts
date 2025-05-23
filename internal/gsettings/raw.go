@@ -31,6 +31,10 @@ func cSetString(s *C.GSettings, key, val *C.char) C.gboolean {
 	return C.g_settings_set_string(s, key, val)
 }
 
+func cReset(settings *C.GSettings, key *C.char) {
+	C.g_settings_reset(settings, key)
+}
+
 func cSync() {
 	C.g_settings_sync()
 }

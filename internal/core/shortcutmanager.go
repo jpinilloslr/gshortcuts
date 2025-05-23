@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"os/exec"
 	"regexp"
 	"slices"
 
@@ -68,12 +67,15 @@ func (s *ShortcutManager) Set(shortcut *Shortcut) error {
 }
 
 func (s *ShortcutManager) DeleteAll() error {
-	return exec.Command(
-		"gsettings",
-		"reset",
-		baseSchema,
-		customKeyBindings,
-	).Run()
+	settings, err := gsettings.New(baseSchema)
+	if err != nil {
+		return err
+	}
+	defer settings.Close()
+
+	settings.Reset(customKeyBindings)
+	settings.Sync()
+	return nil
 }
 
 func (s *ShortcutManager) setParams(path string, shortcut *Shortcut) error {
