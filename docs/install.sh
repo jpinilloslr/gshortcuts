@@ -11,17 +11,11 @@ if [ "$(uname)" != "Linux" ]; then
   exit 1
 fi
 
-if ! command -v gsettings >/dev/null 2>&1; then
-  echo "❌ 'gsettings' is required but not found. Are you running a GNOME environment?"
-  exit 1
-fi
-
 OS=$(uname | tr '[:upper:]' '[:lower:]')
 ARCH=$(uname -m)
 
 case $ARCH in
   x86_64) ARCH=amd64 ;;
-  aarch64 | arm64) ARCH=arm64 ;;
   *) echo "Unsupported architecture: $ARCH"; exit 1 ;;
 esac
 
