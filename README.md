@@ -14,7 +14,7 @@ This tool helps you manage your custom keyboard shortcuts in GNOME-based desktop
 
 ## Features
 
-- Import custom shortcuts from a YAML or JSON file.
+- Import and export custom shortcuts using YAML or JSON files.
 - Reset existing custom shortcuts.
 - Command-line interface for easy integration with scripts.
 
