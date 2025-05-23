@@ -1,10 +1,17 @@
 # gshortcuts
 
-> **Note:** This project is in early development. Please check back in a few days for updates.
-
 [![Go Version](https://img.shields.io/badge/go-1.24-blue.svg)](https://golang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://github.com/jpinilloslr/gshortcuts/actions/workflows/build.yaml/badge.svg?branch=master)](https://github.com/jpinilloslr/gshortcuts/actions/workflows/build.yaml)
+
+## Table of Contents
+
+* [Overview](#overview)
+* [Features](#features)
+* [Installation](#installation)
+* [Usage](#usage)
+* [Configuration File Format](#configuration-file-format)
+* [License](#license)
 
 `gshortcuts` is a command-line tool to manage your GNOME custom shortcuts. Easily import and export your custom shortcuts using YAML or JSON files.
 
@@ -14,9 +21,13 @@ This tool helps you manage your custom keyboard shortcuts in GNOME-based desktop
 
 ## Features
 
-- Import and export custom shortcuts using YAML or JSON files.
-- Reset existing custom shortcuts.
-- Command-line interface for easy integration with scripts.
+* Consistent, idempotent management of GNOME custom shortcuts via declarative config files.
+* Native, direct GIO Settings integration for true GNOME compatibility (no external binaries).
+* Supports both YAML and JSON for flexible workflows.
+* Git-friendly: track and version your shortcut definitions alongside dotfiles.
+* Automatable: integrate into provisioning scripts.
+* Minimal external dependencies, easy to install.
+* Configurable import strategies (replace or merge).
 
 ## Installation
 
@@ -34,7 +45,7 @@ If you have Go installed and prefer to install from source or use a pinned versi
 go install github.com/jpinilloslr/gshortcuts/cmd/gshortcuts@latest
 ```
 
-### From source (for development or specific versions)
+### Alternative: Install from source
 
 If you prefer to build from source or want to install a specific version from a clone:
 
