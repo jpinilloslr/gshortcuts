@@ -151,3 +151,7 @@ func (gs *GSettings) SetString(key string, value string) error {
 	}
 	return nil
 }
+
+func (gs *GSettings) Sync() {
+	cSync()
+}

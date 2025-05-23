@@ -31,6 +31,10 @@ func cSetString(s *C.GSettings, key, val *C.char) C.gboolean {
 	return C.g_settings_set_string(s, key, val)
 }
 
+func cSync() {
+	C.g_settings_sync()
+}
+
 func cFree(ptr unsafe.Pointer) {
 	C.g_free(C.gpointer(ptr))
 }
