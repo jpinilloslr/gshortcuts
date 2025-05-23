@@ -19,7 +19,12 @@ jobs:
         with:
           go-version: "1.24"
 
-      - name: Build with Makefile
+      - name: Install GLib development libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libglib2.0-dev pkg-config
+
+      - name: Build
         run: make
 
       - name: Create GitHub Release
@@ -27,4 +32,3 @@ jobs:
         with:
           files: |
             bin/gshortcuts-linux-amd64
-            bin/gshortcuts-linux-arm64
