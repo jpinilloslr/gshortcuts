@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os/exec"
 	"regexp"
+	"slices"
 
 	"github.com/jpinilloslr/gshortcuts/internal/gsettings"
 )
@@ -49,10 +50,13 @@ func (s *ShortcutManager) Set(shortcut *Shortcut) error {
 
 	newPath := fmt.Sprintf("%s/%s/", basePath, shortcut.Id)
 	paths := settings.GetStringArray(customKeyBindings)
-	paths = append(paths, newPath)
 
-	if err := settings.SetStringArray(customKeyBindings, paths); err != nil {
-		return err
+	if !slices.Contains(paths, newPath) {
+		paths = append(paths, newPath)
+
+		if err := settings.SetStringArray(customKeyBindings, paths); err != nil {
+			return err
+		}
 	}
 
 	if err := s.setParams(newPath, shortcut); err != nil {
