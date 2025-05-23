@@ -27,4 +27,3 @@ jobs:
         with:
           files: |
             bin/gshortcuts-linux-amd64
-            bin/gshortcuts-linux-arm64
