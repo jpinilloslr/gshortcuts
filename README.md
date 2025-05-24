@@ -67,10 +67,6 @@ go install github.com/jpinilloslr/gshortcuts/cmd/gshortcuts@latest
 
 If you prefer to build from source or want to install a specific version from a clone:
 
-> ⚠️ Requires development headers for GLib and GIO.  
-> On Debian/Ubuntu: `sudo apt install libglib2.0-dev pkg-config`
-> On Fedora: sudo dnf install glib2-devel pkgconf-pkg-config
-
 1.  Clone the repository:
     ```bash
     git clone https://github.com/jpinilloslr/gshortcuts.git
