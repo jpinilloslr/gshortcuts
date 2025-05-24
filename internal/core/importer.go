@@ -7,13 +7,13 @@ import (
 )
 
 type Importer struct {
-	codec   *ShortcutCodec
+	codec   *ShortcutsCodec
 	manager *ShortcutManager
 }
 
 func NewImporter() *Importer {
 	return &Importer{
-		codec:   NewShortcutCodec(),
+		codec:   NewShortcutsCodec(),
 		manager: NewShortcutManager(),
 	}
 }
@@ -29,14 +29,14 @@ func (i *Importer) Import(fileName string, strategy ImportStrategy, verbose bool
 			return fmt.Errorf("Aborded")
 		}
 
-		if err := i.manager.DeleteAll(); err != nil {
+		if err := i.manager.ResetCustomShortcuts(); err != nil {
 			return err
 		}
 		fmt.Println("Deleted all existing shortcuts")
 	}
 
-	for _, shortcut := range shortcuts {
-		if err := i.manager.Set(&shortcut); err != nil {
+	for _, shortcut := range shortcuts.Custom {
+		if err := i.manager.SetCustomShortcut(&shortcut); err != nil {
 			return err
 		}
 		if verbose {
@@ -51,7 +51,7 @@ func (i *Importer) Import(fileName string, strategy ImportStrategy, verbose bool
 	}
 
 	fmt.Printf("%s Imported %d shortcuts from %s\n",
-		color.GreenString("✔"), len(shortcuts), fileName)
+		color.GreenString("✔"), len(shortcuts.Custom), fileName)
 
 	return nil
 }
@@ -61,7 +61,7 @@ func (i *Importer) Reset() error {
 		return fmt.Errorf("Aborded")
 	}
 
-	if err := i.manager.DeleteAll(); err != nil {
+	if err := i.manager.ResetCustomShortcuts(); err != nil {
 		return err
 	}
 	fmt.Println("Deleted all existing shortcuts")

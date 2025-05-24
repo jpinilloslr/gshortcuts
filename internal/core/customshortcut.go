@@ -1,6 +1,6 @@
 package core
 
-type Shortcut struct {
+type CustomShortcut struct {
 	Id      string
 	Name    string
 	Binding string

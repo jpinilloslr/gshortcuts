@@ -19,7 +19,20 @@ func NewShortcutManager() *ShortcutManager {
 	return &ShortcutManager{}
 }
 
-func (s *ShortcutManager) GetAll() ([]Shortcut, error) {
+func (s *ShortcutManager) Test() error {
+	settings, err := gsettings.New("org.gnome.desktop.wm.keybindings")
+	if err != nil {
+		return err
+	}
+	defer settings.Close()
+
+	values := settings.GetStringArray("switch-to-workspace-last")
+	fmt.Printf("Current switch-windows keybindings: %v\n", values)
+
+	return nil
+}
+
+func (s *ShortcutManager) GetCustomShortcuts() ([]CustomShortcut, error) {
 	settings, err := gsettings.New(baseSchema)
 	if err != nil {
 		return nil, err
@@ -28,9 +41,9 @@ func (s *ShortcutManager) GetAll() ([]Shortcut, error) {
 
 	paths := settings.GetStringArray(customKeyBindings)
 
-	shortcuts := []Shortcut{}
+	shortcuts := []CustomShortcut{}
 	for _, path := range paths {
-		current, err := s.getShortcut(path)
+		current, err := s.getCustomShortcut(path)
 		if err != nil {
 			return nil, err
 		}
@@ -40,7 +53,7 @@ func (s *ShortcutManager) GetAll() ([]Shortcut, error) {
 	return shortcuts, nil
 }
 
-func (s *ShortcutManager) Set(shortcut *Shortcut) error {
+func (s *ShortcutManager) SetCustomShortcut(shortcut *CustomShortcut) error {
 	settings, err := gsettings.New(baseSchema)
 	if err != nil {
 		return err
@@ -66,7 +79,7 @@ func (s *ShortcutManager) Set(shortcut *Shortcut) error {
 	return nil
 }
 
-func (s *ShortcutManager) DeleteAll() error {
+func (s *ShortcutManager) ResetCustomShortcuts() error {
 	settings, err := gsettings.New(baseSchema)
 	if err != nil {
 		return err
@@ -78,7 +91,7 @@ func (s *ShortcutManager) DeleteAll() error {
 	return nil
 }
 
-func (s *ShortcutManager) setParams(path string, shortcut *Shortcut) error {
+func (s *ShortcutManager) setParams(path string, shortcut *CustomShortcut) error {
 	schema := fmt.Sprintf("%s.%s", baseSchema, "custom-keybinding")
 
 	settings, err := gsettings.NewWithPath(schema, path)
@@ -102,7 +115,7 @@ func (s *ShortcutManager) setParams(path string, shortcut *Shortcut) error {
 	return nil
 }
 
-func (s *ShortcutManager) getShortcut(path string) (*Shortcut, error) {
+func (s *ShortcutManager) getCustomShortcut(path string) (*CustomShortcut, error) {
 	schema := fmt.Sprintf("%s.%s", baseSchema, "custom-keybinding")
 
 	settings, err := gsettings.NewWithPath(schema, path)
@@ -116,7 +129,7 @@ func (s *ShortcutManager) getShortcut(path string) (*Shortcut, error) {
 		return nil, err
 	}
 
-	return &Shortcut{
+	return &CustomShortcut{
 		Id:      id,
 		Name:    settings.GetString("name"),
 		Command: settings.GetString("command"),

@@ -6,24 +6,28 @@ import (
 )
 
 type Exporter struct {
-	codec   *ShortcutCodec
+	codec   *ShortcutsCodec
 	manager *ShortcutManager
 }
 
 func NewExporter() *Exporter {
 	return &Exporter{
-		codec:   NewShortcutCodec(),
+		codec:   NewShortcutsCodec(),
 		manager: NewShortcutManager(),
 	}
 }
 
 func (i *Exporter) Export(fileName string, verbose bool) error {
-	shortcuts, err := i.manager.GetAll()
+	shortcuts, err := i.manager.GetCustomShortcuts()
 	if err != nil {
 		return err
 	}
 
-	if err := i.codec.Encode(shortcuts, fileName); err != nil {
+	data := Shortcuts{
+		Custom: shortcuts,
+	}
+
+	if err := i.codec.Encode(&data, fileName); err != nil {
 		return err
 	}
 
