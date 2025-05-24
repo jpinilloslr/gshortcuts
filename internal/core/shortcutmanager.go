@@ -19,21 +19,68 @@ func NewShortcutManager() *ShortcutManager {
 	return &ShortcutManager{}
 }
 
-func (s *ShortcutManager) Test() error {
-	schema := "org.gnome.desktop.wm.keybindings"
-	settings, err := gsettings.New(schema)
-	if err != nil {
-		return err
+func (s *ShortcutManager) GetBuiltInShortcuts(
+	modifiedOnly bool,
+) (map[string][]BuiltInShortcut, error) {
+	schemas := []string{
+		"org.gnome.desktop.wm.keybindings",
+		"org.gnome.mutter.keybindings",
+		"org.gnome.mutter.wayland.keybindings",
+		"org.gnome.shell.keybindings",
 	}
-	defer settings.Close()
+	result := map[string][]BuiltInShortcut{}
 
+	for _, schema := range schemas {
+		settings, err := gsettings.New(schema)
+		if err != nil {
+			return nil, err
+		}
+		defer settings.Close()
+
+		shortcuts, err := s.getBuiltInShortcutsFromSchema(
+			settings,
+			modifiedOnly,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		if len(shortcuts) > 0 {
+			result[schema] = shortcuts
+		}
+	}
+
+	return result, nil
+}
+
+func (s *ShortcutManager) getBuiltInShortcutsFromSchema(
+	settings *gsettings.GSettings,
+	modifiedOnly bool,
+) ([]BuiltInShortcut, error) {
 	keys, err := settings.ListKeys()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	fmt.Printf("Keys in schema %s: %v\n", schema, keys)
 
-	return nil
+	shortcuts := []BuiltInShortcut{}
+	for _, key := range keys {
+		if modifiedOnly {
+			mod, err := settings.IsKeyModified(key)
+			if err != nil {
+				return nil, err
+			}
+			if !mod {
+				continue
+			}
+		}
+
+		shortcuts = append(shortcuts, BuiltInShortcut{
+			Key:      key,
+			Bindings: settings.GetStringArray(key),
+		})
+	}
+
+	return shortcuts, nil
 }
 
 func (s *ShortcutManager) GetCustomShortcuts() ([]CustomShortcut, error) {
