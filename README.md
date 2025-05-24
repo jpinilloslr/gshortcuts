@@ -13,20 +13,22 @@
 - [Configuration File Format](#configuration-file-format)
 - [License](#license)
 
-`gshortcuts` is a command-line tool to manage your GNOME shortcuts. Easily import and export your shortcuts using YAML or JSON files.
+`gshortcuts` is a command-line tool to import, export, and declaratively manage GNOME built-in and custom keyboard shortcuts.
 
 ## Overview
 
-This tool helps you manage your keyboard shortcuts in GNOME-based desktop environments. You can define your shortcuts in a YAML or JSON file and import them using `gshortcuts`. You can find sample configuration files in the `docs/` directory: [sample-shortcuts.yaml](docs/sample-shortcuts.yaml) and [sample-shortcuts.json](docs/sample-shortcuts.json).
+This tool helps you manage your keyboard shortcuts in GNOME-based desktop environments. You can define your shortcuts in a YAML or JSON file and import them using `gshortcuts`.
 
 ## Features
 
-- Consistent, idempotent management of GNOME shortcuts via declarative config files.
-- Native, direct GIO Settings integration for true GNOME compatibility (no external binaries).
-- Supports both YAML and JSON for flexible workflows.
-- Git-friendly: track and version your shortcut definitions alongside dotfiles.
-- Automatable: integrate into provisioning scripts.
-- Minimal external dependencies, easy to install.
+- Fast and idempotent.
+- Manage both built-in and custom GNOME shortcuts.
+- Native GIO Settings integration (no external processes).
+- No need to restart your GNOME session, changes take effect immediately.
+- Declarative config format: track changes easily with Git.
+- Supports both YAML and JSON.
+- Compatible with provisioning scripts or system setup automation.
+- Avoids manual DConf branch management, no need to export and merge multiple DConf paths when syncing shortcut settings.
 
 ## Installation
 
@@ -80,11 +82,6 @@ A command line tool to manage your shortcuts in GNOME
   gshortcuts import /path/to/your/shortcuts.json
   ```
 
-  Sample files can be found in the `docs/` directory:
-
-  - [`docs/sample-shortcuts.yaml`](docs/sample-shortcuts.yaml)
-  - [`docs/sample-shortcuts.json`](docs/sample-shortcuts.json)
-
 - `export`: Exports shortcuts to a specified file.
 
   ```bash
@@ -97,9 +94,8 @@ A command line tool to manage your shortcuts in GNOME
 For more information on each command, use the `-h` or `--help` flag:
 
 ```bash
-gshortcuts import --help
-gshortcuts export --help
-gshortcuts reset --help
+gshortcuts --help
+gshortcuts <subcommand> --help
 ```
 
 ## Configuration File Format
