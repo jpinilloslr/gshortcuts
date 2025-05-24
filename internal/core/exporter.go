@@ -17,8 +17,16 @@ func NewExporter() *Exporter {
 	}
 }
 
-func (i *Exporter) Export(fileName string, verbose bool) error {
-	builtInShortcuts, err := i.manager.GetBuiltInShortcuts(true)
+func (i *Exporter) Export(fileName string, verbose, modifiedOnly bool) error {
+	if verbose {
+		if modifiedOnly {
+			fmt.Printf("Exporting only modified shortcuts...\n")
+		} else {
+			fmt.Printf("Exporting all shortcuts...\n")
+		}
+	}
+
+	builtInShortcuts, err := i.manager.GetBuiltInShortcuts(modifiedOnly)
 	if err != nil {
 		return err
 	}
