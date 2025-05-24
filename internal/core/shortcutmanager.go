@@ -21,26 +21,17 @@ func NewShortcutManager() *ShortcutManager {
 
 func (s *ShortcutManager) Test() error {
 	schema := "org.gnome.desktop.wm.keybindings"
-	key := "switch-to-workspace-9"
 	settings, err := gsettings.New(schema)
 	if err != nil {
 		return err
 	}
 	defer settings.Close()
 
-	values := settings.GetStringArray(key)
-	fmt.Printf("%s keybindings: %v\n", key, values)
-
-	mod, err := settings.IsKeyModified(schema, key)
+	keys, err := settings.ListKeys()
 	if err != nil {
 		return err
 	}
-
-	if mod {
-		fmt.Printf("The key '%s' is modified.\n", key)
-	} else {
-		fmt.Printf("The key '%s' is not modified.\n", key)
-	}
+	fmt.Printf("Keys in schema %s: %v\n", schema, keys)
 
 	return nil
 }

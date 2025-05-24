@@ -11,7 +11,8 @@ import (
 )
 
 type GSettings struct {
-	ptr *C.GSettings
+	ptr    *C.GSettings
+	schema string
 }
 
 func New(schema string) (*GSettings, error) {
@@ -27,7 +28,8 @@ func New(schema string) (*GSettings, error) {
 	}
 
 	return &GSettings{
-		ptr: ptr,
+		ptr:    ptr,
+		schema: schema,
 	}, nil
 }
 
@@ -47,7 +49,8 @@ func NewWithPath(schema, path string) (*GSettings, error) {
 	}
 
 	return &GSettings{
-		ptr: ptr,
+		ptr:    ptr,
+		schema: schema,
 	}, nil
 }
 
@@ -152,8 +155,8 @@ func (gs *GSettings) SetString(key string, value string) error {
 	return nil
 }
 
-func (gs *GSettings) IsKeyModified(schema, key string) (bool, error) {
-	cSchema := C.CString(schema)
+func (gs *GSettings) IsKeyModified(key string) (bool, error) {
+	cSchema := C.CString(gs.schema)
 	cKey := C.CString(key)
 	var errMsg *C.char
 	defer func() {
@@ -169,6 +172,37 @@ func (gs *GSettings) IsKeyModified(schema, key string) (bool, error) {
 		return false, fmt.Errorf("%s", C.GoString(errMsg))
 	}
 	return result == 1, nil
+}
+
+func (gs *GSettings) ListKeys() ([]string, error) {
+	cSchema := C.CString(gs.schema)
+	defer C.free(unsafe.Pointer(cSchema))
+
+	var errMsg *C.char
+	cArr := cListKeys(cSchema, &errMsg)
+	if errMsg != nil {
+		defer C.free(unsafe.Pointer(errMsg))
+		return nil, fmt.Errorf("gsettings schema-list: %s", C.GoString(errMsg))
+	}
+	if cArr == nil {
+		return nil, nil
+	}
+	defer C.g_strfreev(cArr)
+
+	var keys []string
+	for i := 0; ; i++ {
+		ptr := *(**C.char)(
+			unsafe.Pointer(
+				uintptr(unsafe.Pointer(cArr)) + uintptr(i)*unsafe.Sizeof(uintptr(0)),
+			),
+		)
+		if ptr == nil {
+			break
+		}
+		keys = append(keys, C.GoString(ptr))
+	}
+
+	return keys, nil
 }
 
 func (gs *GSettings) Reset(key string) {
