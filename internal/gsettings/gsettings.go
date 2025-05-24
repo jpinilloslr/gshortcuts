@@ -152,10 +152,29 @@ func (gs *GSettings) SetString(key string, value string) error {
 	return nil
 }
 
+func (gs *GSettings) IsKeyModified(schema, key string) (bool, error) {
+	cSchema := C.CString(schema)
+	cKey := C.CString(key)
+	var errMsg *C.char
+	defer func() {
+		C.free(unsafe.Pointer(cSchema))
+		C.free(unsafe.Pointer(cKey))
+		if errMsg != nil {
+			C.free(unsafe.Pointer(errMsg))
+		}
+	}()
+
+	result := cIsKeyModified(cSchema, cKey, &errMsg)
+	if result == -1 {
+		return false, fmt.Errorf("%s", C.GoString(errMsg))
+	}
+	return result == 1, nil
+}
+
 func (gs *GSettings) Reset(key string) {
 	cKey := C.CString(key)
 	defer C.free(unsafe.Pointer(cKey))
-	C.g_settings_reset(gs.ptr, cKey)
+	cReset(gs.ptr, cKey)
 }
 
 func (gs *GSettings) Sync() {
