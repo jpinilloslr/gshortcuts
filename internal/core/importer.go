@@ -18,21 +18,10 @@ func NewImporter() *Importer {
 	}
 }
 
-func (i *Importer) Import(fileName string, strategy ImportStrategy, verbose bool) error {
+func (i *Importer) Import(fileName string, verbose bool) error {
 	shortcuts, err := i.codec.Decode(fileName)
 	if err != nil {
 		return err
-	}
-
-	if strategy == Replace {
-		if !confirm("This will delete all existing shortcuts. Do you want to continue?") {
-			return fmt.Errorf("Aborded")
-		}
-
-		if err := i.manager.ResetCustomShortcuts(); err != nil {
-			return err
-		}
-		fmt.Println("Deleted all existing shortcuts")
 	}
 
 	if err := i.manager.SetCustomShortcuts(shortcuts.Custom); err != nil {
