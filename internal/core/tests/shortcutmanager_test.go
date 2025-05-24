@@ -20,11 +20,6 @@ func TestShortcutManager_GetCustomShortcuts(t *testing.T) {
 
 func TestShortcutManager_GetBuiltInShortcuts(t *testing.T) {
 	manager := core.NewShortcutManager()
-
-	items, err := manager.GetBuiltInShortcuts(true)
-	if err != nil {
-		t.Fatalf("expected no error, got %v", err)
-	}
-
+	items := manager.GetBuiltInShortcuts(true)
 	fmt.Printf("Items: %+v\n", items)
 }
