@@ -1,5 +1,5 @@
-#include <gio/gio.h>
 #include <stdlib.h>
+#include <gio/gio.h>
 
 // TODO: let's avoid redundant allocations of GSettings by passing it
 // as a parameter instead of creating it inside the function.
@@ -46,3 +46,26 @@ int gsettings_key_is_modified(const char* schema, const char* key, char** error_
     return changed ? 1 : 0;
 }
 
+
+char **gsettings_list_schema_keys_by_schema(const char *schema_id, char **error_out) {
+    if (!schema_id) {
+        *error_out = g_strdup("schema_id is NULL");
+        return NULL;
+    }
+
+    GSettingsSchemaSource *src = g_settings_schema_source_get_default();
+    if (!src) {
+        *error_out = g_strdup("no default GSettingsSchemaSource");
+        return NULL;
+    }
+
+    GSettingsSchema *schema = 
+        g_settings_schema_source_lookup(src, schema_id, TRUE);
+    if (!schema) {
+        *error_out = g_strdup("schema not found: ");
+        *error_out = g_strconcat(*error_out, schema_id, NULL);
+        return NULL;
+    }
+
+    return g_settings_schema_list_keys(schema);
+}
