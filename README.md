@@ -156,9 +156,9 @@ custom:
     ],
     "org.gnome.shell.keybindings": [
       { "Key": "switch-to-application-1", "Bindings": null },
-      { "Key": "switch-to-application-4", "Bindings": null },
       { "Key": "switch-to-application-2", "Bindings": null },
-      { "Key": "switch-to-application-3", "Bindings": null }
+      { "Key": "switch-to-application-3", "Bindings": null },
+      { "Key": "switch-to-application-4", "Bindings": null }
     ]
   },
   "custom": [
