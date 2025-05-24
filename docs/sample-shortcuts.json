@@ -1,14 +1,30 @@
-[
-  {
-    "id": "terminal",
-    "name": "Terminal",
-    "binding": "<Shift><Control>t",
-    "command": "ptyxis"
+{
+  "builtIn": {
+    "org.gnome.desktop.wm.keybindings": [
+      { "Key": "switch-to-workspace-1", "Bindings": ["<Super>1"] },
+      { "Key": "switch-to-workspace-2", "Bindings": ["<Super>2"] },
+      { "Key": "switch-to-workspace-3", "Bindings": ["<Super>3"] },
+      { "Key": "switch-to-workspace-4", "Bindings": ["<Super>4"] }
+    ],
+    "org.gnome.shell.keybindings": [
+      { "Key": "switch-to-application-1", "Bindings": null },
+      { "Key": "switch-to-application-2", "Bindings": null },
+      { "Key": "switch-to-application-3", "Bindings": null },
+      { "Key": "switch-to-application-4", "Bindings": null }
+    ]
   },
-  {
-    "id": "terminal-with-tmux",
-    "name": "Terminal & Tmux",
-    "binding": "<Alt><Control>t",
-    "command": "ptyxis -e tmux"
-  }
-]
+  "custom": [
+    {
+      "id": "gnome-terminal",
+      "name": "Open Terminal",
+      "command": "gnome-terminal",
+      "binding": "<Super>t"
+    },
+    {
+      "id": "firefox",
+      "name": "Open Browser",
+      "command": "firefox",
+      "binding": "<Super>b"
+    }
+  ]
+}

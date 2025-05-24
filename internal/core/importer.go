@@ -7,63 +7,68 @@ import (
 )
 
 type Importer struct {
-	codec   *ShortcutCodec
+	codec   *ShortcutsCodec
 	manager *ShortcutManager
 }
 
 func NewImporter() *Importer {
 	return &Importer{
-		codec:   NewShortcutCodec(),
+		codec:   NewShortcutsCodec(),
 		manager: NewShortcutManager(),
 	}
 }
 
-func (i *Importer) Import(fileName string, strategy ImportStrategy, verbose bool) error {
+func (i *Importer) Import(fileName string, verbose bool) error {
 	shortcuts, err := i.codec.Decode(fileName)
 	if err != nil {
 		return err
 	}
 
-	if strategy == Replace {
-		if !confirm("This will delete all existing shortcuts. Do you want to continue?") {
-			return fmt.Errorf("Aborded")
-		}
-
-		if err := i.manager.DeleteAll(); err != nil {
+	for schema, entries := range shortcuts.BuiltIn {
+		if err := i.manager.SetBuiltInShortcuts(schema, entries); err != nil {
 			return err
 		}
-		fmt.Println("Deleted all existing shortcuts")
 	}
 
-	for _, shortcut := range shortcuts {
-		if err := i.manager.Set(&shortcut); err != nil {
-			return err
-		}
+	if err := i.manager.SetCustomShortcuts(shortcuts.Custom); err != nil {
+		return err
+	}
+
+	totalCount := len(shortcuts.Custom)
+
+	for schema, shortcuts := range shortcuts.BuiltIn {
+		totalCount += len(shortcuts)
 		if verbose {
-			fmt.Printf("Imported shortcut: %s\n", shortcut.Name)
-			fmt.Printf("\tCommand: %s\n", shortcut.Command)
-			fmt.Printf("\tBinding: %s\n", shortcut.Binding)
+			fmt.Printf("Imported %d shortcuts in \"%s\"\n", len(shortcuts), schema)
+			for _, shortcut := range shortcuts {
+				fmt.Printf("\t%s: %+v\n", shortcut.Key, shortcut.Bindings)
+			}
+			fmt.Println()
 		}
 	}
 
 	if verbose {
+		fmt.Printf("Imported %d custom shortcuts\n", len(shortcuts.Custom))
+		for _, shortcut := range shortcuts.Custom {
+			fmt.Printf("\t%s: %s\n", shortcut.Id, shortcut.Binding)
+		}
 		fmt.Println()
 	}
 
-	fmt.Printf("%s Imported %d shortcuts from %s\n",
-		color.GreenString("✔"), len(shortcuts), fileName)
+	fmt.Printf("%s Imported %d total shortcuts from %s\n",
+		color.GreenString("✔"), totalCount, fileName)
 
 	return nil
 }
 
-func (i *Importer) Reset() error {
-	if !confirm("This will delete all existing shortcuts. Do you want to continue?") {
+func (i *Importer) ResetCustomShortcuts() error {
+	if !confirm("This will delete all existing custom shortcuts. Do you want to continue?") {
 		return fmt.Errorf("Aborded")
 	}
 
-	if err := i.manager.DeleteAll(); err != nil {
+	if err := i.manager.ResetCustomShortcuts(); err != nil {
 		return err
 	}
-	fmt.Println("Deleted all existing shortcuts")
+	fmt.Println("Reset all custom shortcuts")
 	return nil
 }

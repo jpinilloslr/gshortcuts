@@ -1,9 +1,32 @@
-- id: terminal
-  name: Terminal
-  binding: "<Shift><Control>t"
-  command: ptyxis
-
-- id: terminal-with-tmux
-  name: Terminal & Tmux
-  binding: "<Alt><Control>t"
-  command: "ptyxis -e tmux"
+builtin:
+  org.gnome.desktop.wm.keybindings:
+    - key: switch-to-workspace-1
+      bindings:
+        - <Super>1
+    - key: switch-to-workspace-2
+      bindings:
+        - <Super>2
+    - key: switch-to-workspace-3
+      bindings:
+        - <Super>3
+    - key: switch-to-workspace-4
+      bindings:
+        - <Super>4
+  org.gnome.shell.keybindings:
+    - key: switch-to-application-1
+      bindings: []
+    - key: switch-to-application-2
+      bindings: []
+    - key: switch-to-application-3
+      bindings: []
+    - key: switch-to-application-4
+      bindings: []
+custom:
+  - id: gnome-terminal
+    name: Open Terminal
+    binding: <Super>t
+    command: gnome-terminal
+  - id: firefox
+    name: Open Browser
+    binding: <Super>b
+    command: firefox

@@ -3,9 +3,17 @@ package gsettings
 /*
 #cgo pkg-config: gio-2.0 glib-2.0
 #include <gio/gio.h>
+#include <gio/gsettings.h>
+*/
+/*
+
+int gsettings_key_is_modified(const char* schema, const char* key, char** error_out);
+char **gsettings_list_schema_keys_by_schema(const char *schema_id, char **error_out);
 */
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+)
 
 func cNewSettings(schema *C.char) *C.GSettings {
 	return C.g_settings_new(schema)
@@ -33,6 +41,14 @@ func cSetString(s *C.GSettings, key, val *C.char) C.gboolean {
 
 func cReset(settings *C.GSettings, key *C.char) {
 	C.g_settings_reset(settings, key)
+}
+
+func cIsKeyModified(schema *C.char, key *C.char, errorOut **C.char) C.int {
+	return C.gsettings_key_is_modified(schema, key, errorOut)
+}
+
+func cListKeys(schema *C.char, errorOut **C.char) **C.char {
+	return C.gsettings_list_schema_keys_by_schema(schema, errorOut)
 }
 
 func cSync() {

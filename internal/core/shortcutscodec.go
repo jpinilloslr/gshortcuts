@@ -11,14 +11,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type ShortcutCodec struct {
+type ShortcutsCodec struct {
 }
 
-func NewShortcutCodec() *ShortcutCodec {
-	return &ShortcutCodec{}
+func NewShortcutsCodec() *ShortcutsCodec {
+	return &ShortcutsCodec{}
 }
 
-func (c *ShortcutCodec) Decode(fileName string) ([]Shortcut, error) {
+func (c *ShortcutsCodec) Decode(fileName string) (*Shortcuts, error) {
 	ext := strings.ToLower(filepath.Ext(fileName))
 
 	switch ext {
@@ -31,7 +31,7 @@ func (c *ShortcutCodec) Decode(fileName string) ([]Shortcut, error) {
 	}
 }
 
-func (c *ShortcutCodec) Encode(shortcuts []Shortcut, fileName string) error {
+func (c *ShortcutsCodec) Encode(shortcuts *Shortcuts, fileName string) error {
 	ext := strings.ToLower(filepath.Ext(fileName))
 
 	switch ext {
@@ -42,22 +42,22 @@ func (c *ShortcutCodec) Encode(shortcuts []Shortcut, fileName string) error {
 	}
 }
 
-func (l *ShortcutCodec) decodeJSON(fileName string) ([]Shortcut, error) {
+func (l *ShortcutsCodec) decodeJSON(fileName string) (*Shortcuts, error) {
 	file, err := os.ReadFile(fileName)
 	if err != nil {
 		return nil, err
 	}
 
-	var data []Shortcut
+	var data Shortcuts
 	err = json.Unmarshal(file, &data)
 	if err != nil {
 		return nil, err
 	}
 
-	return data, nil
+	return &data, nil
 }
 
-func (l *ShortcutCodec) encodeJSON(shortcuts []Shortcut, fileName string) error {
+func (l *ShortcutsCodec) encodeJSON(shortcuts *Shortcuts, fileName string) error {
 	var data bytes.Buffer
 	enc := json.NewEncoder(&data)
 	enc.SetEscapeHTML(false)
@@ -76,22 +76,22 @@ func (l *ShortcutCodec) encodeJSON(shortcuts []Shortcut, fileName string) error 
 	return nil
 }
 
-func (l *ShortcutCodec) decodeYAML(fileName string) ([]Shortcut, error) {
+func (l *ShortcutsCodec) decodeYAML(fileName string) (*Shortcuts, error) {
 	file, err := os.ReadFile(fileName)
 	if err != nil {
 		return nil, err
 	}
 
-	var data []Shortcut
+	var data Shortcuts
 	err = yaml.Unmarshal(file, &data)
 	if err != nil {
 		return nil, err
 	}
 
-	return data, nil
+	return &data, nil
 }
 
-func (l *ShortcutCodec) encodeYAML(shortcuts []Shortcut, fileName string) error {
+func (l *ShortcutsCodec) encodeYAML(shortcuts *Shortcuts, fileName string) error {
 	data, err := yaml.Marshal(shortcuts)
 	if err != nil {
 		return err
