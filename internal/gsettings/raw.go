@@ -9,6 +9,7 @@ package gsettings
 
 int gsettings_key_is_modified(const char* schema, const char* key, char** error_out);
 char **gsettings_list_schema_keys_by_schema(const char *schema_id, char **error_out);
+gboolean gsettings_schema_exists(const char* schema_id);
 */
 import "C"
 import (
@@ -49,6 +50,10 @@ func cIsKeyModified(schema *C.char, key *C.char, errorOut **C.char) C.int {
 
 func cListKeys(schema *C.char, errorOut **C.char) **C.char {
 	return C.gsettings_list_schema_keys_by_schema(schema, errorOut)
+}
+
+func cSchemaExists(schema *C.char) C.gboolean {
+	return C.gsettings_schema_exists(schema)
 }
 
 func cSync() {

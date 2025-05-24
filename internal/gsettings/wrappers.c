@@ -69,3 +69,16 @@ char **gsettings_list_schema_keys_by_schema(const char *schema_id, char **error_
 
     return g_settings_schema_list_keys(schema);
 }
+
+gboolean gsettings_schema_exists(const char *schema_id) {
+    GSettingsSchemaSource *src = g_settings_schema_source_get_default();
+    if (!src) {
+        return FALSE;
+    }
+
+    return g_settings_schema_source_lookup(
+        src,
+        schema_id,
+        TRUE
+    ) != NULL;
+}
