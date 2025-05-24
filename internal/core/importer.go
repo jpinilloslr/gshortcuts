@@ -35,18 +35,14 @@ func (i *Importer) Import(fileName string, strategy ImportStrategy, verbose bool
 		fmt.Println("Deleted all existing shortcuts")
 	}
 
-	for _, shortcut := range shortcuts.Custom {
-		if err := i.manager.SetCustomShortcut(&shortcut); err != nil {
-			return err
-		}
-		if verbose {
-			fmt.Printf("Imported shortcut: %s\n", shortcut.Name)
-			fmt.Printf("\tCommand: %s\n", shortcut.Command)
-			fmt.Printf("\tBinding: %s\n", shortcut.Binding)
-		}
+	if err := i.manager.SetCustomShortcuts(shortcuts.Custom); err != nil {
+		return err
 	}
 
 	if verbose {
+		for _, shortcut := range shortcuts.Custom {
+			fmt.Printf("Imported custom shortcut: %s\n", shortcut.Name)
+		}
 		fmt.Println()
 	}
 

@@ -104,13 +104,27 @@ func (s *ShortcutManager) GetCustomShortcuts() ([]CustomShortcut, error) {
 	return shortcuts, nil
 }
 
-func (s *ShortcutManager) SetCustomShortcut(shortcut *CustomShortcut) error {
+func (s *ShortcutManager) SetCustomShortcuts(shortcuts []CustomShortcut) error {
 	settings, err := gsettings.New(baseSchema)
 	if err != nil {
 		return err
 	}
 	defer settings.Close()
 
+	for _, current := range shortcuts {
+		if err := s.setCustomShortcut(settings, &current); err != nil {
+			return err
+		}
+	}
+
+	settings.Sync()
+	return nil
+}
+
+func (s *ShortcutManager) setCustomShortcut(
+	settings *gsettings.GSettings,
+	shortcut *CustomShortcut,
+) error {
 	newPath := fmt.Sprintf("%s/%s/", basePath, shortcut.Id)
 	paths := settings.GetStringArray(customKeyBindings)
 
@@ -125,8 +139,6 @@ func (s *ShortcutManager) SetCustomShortcut(shortcut *CustomShortcut) error {
 	if err := s.setParams(newPath, shortcut); err != nil {
 		return err
 	}
-
-	settings.Sync()
 	return nil
 }
 
