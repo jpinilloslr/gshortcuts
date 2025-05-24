@@ -26,10 +26,7 @@ func (i *Exporter) Export(fileName string, verbose, modifiedOnly bool) error {
 		}
 	}
 
-	builtInShortcuts, err := i.manager.GetBuiltInShortcuts(modifiedOnly)
-	if err != nil {
-		return err
-	}
+	builtInShortcuts := i.manager.GetBuiltInShortcuts(modifiedOnly)
 
 	customShortcuts, err := i.manager.GetCustomShortcuts()
 	if err != nil {
@@ -52,18 +49,16 @@ func (i *Exporter) Export(fileName string, verbose, modifiedOnly bool) error {
 		if verbose {
 			fmt.Printf("Exported %d shortcuts in \"%s\"\n", len(shortcuts), schema)
 			for _, shortcut := range shortcuts {
-				fmt.Printf("\t%s: %+v\n", shortcut.Key, shortcut.Bindings)
+				fmt.Printf("  %s: %+v\n", shortcut.Key, shortcut.Bindings)
 			}
-			fmt.Println()
 		}
 	}
 
 	if verbose {
 		fmt.Printf("Exported %d custom shortcuts\n", len(customShortcuts))
 		for _, shortcut := range customShortcuts {
-			fmt.Printf("\t%s: %s\n", shortcut.Id, shortcut.Binding)
+			fmt.Printf("  %s: %s\n", shortcut.Id, shortcut.Binding)
 		}
-		fmt.Println()
 	}
 
 	fmt.Printf("%s Exported %d total shortcuts to %s\n",

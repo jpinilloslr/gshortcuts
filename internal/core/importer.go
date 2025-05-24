@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/fatih/color"
+	"github.com/jpinilloslr/gshortcuts/internal/console"
 )
 
 type Importer struct {
@@ -24,9 +25,17 @@ func (i *Importer) Import(fileName string, verbose bool) error {
 		return err
 	}
 
+	totalCount := len(shortcuts.Custom)
+
 	for schema, entries := range shortcuts.BuiltIn {
-		if err := i.manager.SetBuiltInShortcuts(schema, entries); err != nil {
-			return err
+		processedCount := i.manager.SetBuiltInShortcuts(schema, entries)
+		totalCount += processedCount
+
+		if verbose {
+			fmt.Printf("Imported %d shortcuts in \"%s\"\n", processedCount, schema)
+			for _, shortcut := range entries {
+				fmt.Printf("  %s: %+v\n", shortcut.Key, shortcut.Bindings)
+			}
 		}
 	}
 
@@ -34,25 +43,11 @@ func (i *Importer) Import(fileName string, verbose bool) error {
 		return err
 	}
 
-	totalCount := len(shortcuts.Custom)
-
-	for schema, shortcuts := range shortcuts.BuiltIn {
-		totalCount += len(shortcuts)
-		if verbose {
-			fmt.Printf("Imported %d shortcuts in \"%s\"\n", len(shortcuts), schema)
-			for _, shortcut := range shortcuts {
-				fmt.Printf("\t%s: %+v\n", shortcut.Key, shortcut.Bindings)
-			}
-			fmt.Println()
-		}
-	}
-
 	if verbose {
 		fmt.Printf("Imported %d custom shortcuts\n", len(shortcuts.Custom))
 		for _, shortcut := range shortcuts.Custom {
-			fmt.Printf("\t%s: %s\n", shortcut.Id, shortcut.Binding)
+			fmt.Printf("  %s: %+v\n", shortcut.Id, shortcut.Binding)
 		}
-		fmt.Println()
 	}
 
 	fmt.Printf("%s Imported %d total shortcuts from %s\n",
@@ -62,7 +57,7 @@ func (i *Importer) Import(fileName string, verbose bool) error {
 }
 
 func (i *Importer) ResetCustomShortcuts() error {
-	if !confirm("This will delete all existing custom shortcuts. Do you want to continue?") {
+	if !console.Confirm("This will delete all existing custom shortcuts. Do you want to continue?") {
 		return fmt.Errorf("Aborded")
 	}
 
