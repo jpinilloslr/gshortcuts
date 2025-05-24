@@ -19,6 +19,10 @@ func New(schema string) (*GSettings, error) {
 	cSchema := C.CString(schema)
 	defer C.free(unsafe.Pointer(cSchema))
 
+	if cSchemaExists(cSchema) != C.TRUE {
+		return nil, fmt.Errorf(`schema "%s" does not exist`, schema)
+	}
+
 	ptr := cNewSettings(cSchema)
 	if ptr == nil {
 		return nil, fmt.Errorf(
@@ -38,6 +42,10 @@ func NewWithPath(schema, path string) (*GSettings, error) {
 	defer C.free(unsafe.Pointer(cSchema))
 	cPath := C.CString(path)
 	defer C.free(unsafe.Pointer(cPath))
+
+	if cSchemaExists(cSchema) != C.TRUE {
+		return nil, fmt.Errorf(`schema "%s" does not exist`, schema)
+	}
 
 	ptr := cNewSettingsWithPath(cSchema, cPath)
 	if ptr == nil {
