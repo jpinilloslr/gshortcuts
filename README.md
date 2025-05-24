@@ -12,6 +12,7 @@
 - [Dependencies](#dependencies)
 - [Usage](#usage)
 - [Configuration File Format](#configuration-file-format)
+- [Reporting Issues](#reporting-issues)
 - [License](#license)
 
 `gshortcuts` is a command-line tool to import, export, and declaratively manage GNOME built-in and custom keyboard shortcuts.
@@ -186,6 +187,10 @@ custom:
   ]
 }
 ```
+
+## Reporting Issues
+
+Found a bug or unexpected behavior? Please open an issue with as much detail as possible: OS version, GNOME version, verbose logs and steps to reproduce are appreciated.
 
 ## License
 
