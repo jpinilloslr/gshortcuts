@@ -13,15 +13,15 @@
 - [Configuration File Format](#configuration-file-format)
 - [License](#license)
 
-`gshortcuts` is a command-line tool to manage your GNOME custom shortcuts. Easily import and export your custom shortcuts using YAML or JSON files.
+`gshortcuts` is a command-line tool to manage your GNOME shortcuts. Easily import and export your shortcuts using YAML or JSON files.
 
 ## Overview
 
-This tool helps you manage your custom keyboard shortcuts in GNOME-based desktop environments. You can define your shortcuts in a YAML or JSON file and import them using `gshortcuts`. You can find sample configuration files in the `docs/` directory: [sample-shortcuts.yaml](docs/sample-shortcuts.yaml) and [sample-shortcuts.json](docs/sample-shortcuts.json).
+This tool helps you manage your keyboard shortcuts in GNOME-based desktop environments. You can define your shortcuts in a YAML or JSON file and import them using `gshortcuts`. You can find sample configuration files in the `docs/` directory: [sample-shortcuts.yaml](docs/sample-shortcuts.yaml) and [sample-shortcuts.json](docs/sample-shortcuts.json).
 
 ## Features
 
-- Consistent, idempotent management of GNOME custom shortcuts via declarative config files.
+- Consistent, idempotent management of GNOME shortcuts via declarative config files.
 - Native, direct GIO Settings integration for true GNOME compatibility (no external binaries).
 - Supports both YAML and JSON for flexible workflows.
 - Git-friendly: track and version your shortcut definitions alongside dotfiles.
@@ -68,12 +68,12 @@ If you prefer to build from source or want to install a specific version from a 
 The main command is `gshortcuts`.
 
 ```
-A command line tool to manage your custom shortcuts in GNOME
+A command line tool to manage your shortcuts in GNOME
 ```
 
 ### Commands
 
-- `import`: Imports custom shortcuts from a specified file.
+- `import`: Imports shortcuts from a specified file.
 
   ```bash
   gshortcuts import /path/to/your/shortcuts.yaml
@@ -85,14 +85,14 @@ A command line tool to manage your custom shortcuts in GNOME
   - [`docs/sample-shortcuts.yaml`](docs/sample-shortcuts.yaml)
   - [`docs/sample-shortcuts.json`](docs/sample-shortcuts.json)
 
-- `export`: Exports custom shortcuts to a specified file.
+- `export`: Exports shortcuts to a specified file.
 
   ```bash
   gshortcuts export /path/to/your/shortcuts.yaml
   gshortcuts export /path/to/your/shortcuts.json
   ```
 
-- `reset`: Resets all custom shortcuts.
+- `reset-custom`: Resets all custom shortcuts.
 
 For more information on each command, use the `-h` or `--help` flag:
 
@@ -106,37 +106,76 @@ gshortcuts reset --help
 
 Shortcuts should be defined in a YAML or JSON file. Here's an example structure (refer to [docs/sample-shortcuts.yaml](docs/sample-shortcuts.yaml) or [docs/sample-shortcuts.json](docs/sample-shortcuts.json) for more):
 
-**YAML Example (`shortcuts.yaml`):**
+**YAML Example:**
 
 ```yaml
-- id: "gnome-terminal"
-  name: "Open Terminal"
-  command: "gnome-terminal"
-  binding: "<Super>t"
-
-- id: "firefox"
-  name: "Open Browser"
-  command: "firefox"
-  binding: "<Super>b"
+builtin:
+  org.gnome.desktop.wm.keybindings:
+    - key: switch-to-workspace-1
+      bindings:
+        - <Super>1
+    - key: switch-to-workspace-2
+      bindings:
+        - <Super>2
+    - key: switch-to-workspace-3
+      bindings:
+        - <Super>3
+    - key: switch-to-workspace-4
+      bindings:
+        - <Super>4
+  org.gnome.shell.keybindings:
+    - key: switch-to-application-1
+      bindings: []
+    - key: switch-to-application-2
+      bindings: []
+    - key: switch-to-application-3
+      bindings: []
+    - key: switch-to-application-4
+      bindings: []
+custom:
+  - id: gnome-terminal
+    name: Open Terminal
+    binding: <Super>t
+    command: gnome-terminal
+  - id: firefox
+    name: Open Browser
+    binding: <Super>b
+    command: firefox
 ```
 
-**JSON Example (`shortcuts.json`):**
+**JSON Example:**
 
 ```json
-[
-  {
-    "id": "gnome-terminal",
-    "name": "Open Terminal",
-    "command": "gnome-terminal",
-    "binding": "<Super>t"
+{
+  "builtIn": {
+    "org.gnome.desktop.wm.keybindings": [
+      { "Key": "switch-to-workspace-1", "Bindings": ["<Super>1"] },
+      { "Key": "switch-to-workspace-2", "Bindings": ["<Super>2"] },
+      { "Key": "switch-to-workspace-3", "Bindings": ["<Super>3"] },
+      { "Key": "switch-to-workspace-4", "Bindings": ["<Super>4"] }
+    ],
+    "org.gnome.shell.keybindings": [
+      { "Key": "switch-to-application-1", "Bindings": null },
+      { "Key": "switch-to-application-4", "Bindings": null },
+      { "Key": "switch-to-application-2", "Bindings": null },
+      { "Key": "switch-to-application-3", "Bindings": null }
+    ]
   },
-  {
-    "id": "firefox",
-    "name": "Open Browser",
-    "command": "firefox",
-    "binding": "<Super>b"
-  }
-]
+  "custom": [
+    {
+      "id": "gnome-terminal",
+      "name": "Open Terminal",
+      "command": "gnome-terminal",
+      "binding": "<Super>t"
+    },
+    {
+      "id": "firefox",
+      "name": "Open Browser",
+      "command": "firefox",
+      "binding": "<Super>b"
+    }
+  ]
+}
 ```
 
 ## License

@@ -8,7 +8,7 @@
 
     <meta
       name="description"
-      content="gshortcuts is a command-line tool to import and export GNOME custom keyboard shortcuts in YAML and JSON format."
+      content="gshortcuts is a command-line tool to import and export GNOME keyboard shortcuts in YAML and JSON format."
     />
     <meta
       name="keywords"
@@ -22,7 +22,7 @@
     />
     <meta
       property="og:description"
-      content="Manage your GNOME custom keyboard shortcuts easily from the command line."
+      content="Manage your GNOME keyboard shortcuts easily from the command line."
     />
     <meta property="og:url" content="https://gshortcuts.jpinillos.dev" />
     <meta property="og:type" content="website" />
@@ -35,7 +35,7 @@
     <meta name="twitter:title" content="gshortcuts" />
     <meta
       name="twitter:description"
-      content="Command-line tool to manage GNOME custom keyboard shortcuts."
+      content="Command-line tool to manage GNOME keyboard shortcuts."
     />
     <meta
       name="twitter:image"
@@ -60,7 +60,7 @@
   <body>
     <header>
       <h1>gshortcuts</h1>
-      <p>Import and export your GNOME custom keyboard shortcuts with ease.</p>
+      <p>Import and export your GNOME keyboard shortcuts with ease.</p>
       <a href="#install" class="btn">Get Started</a>
       <a href="https://github.com/jpinilloslr/gshortcuts/" class="btn"
         >GitHub</a
@@ -72,11 +72,7 @@
       <div class="features">
         <div class="feature">
           <h3>Import &amp; Export</h3>
-          <p>Backup and restore your custom GNOME shortcuts.</p>
-        </div>
-        <div class="feature">
-          <h3>Flexible</h3>
-          <p>Override or merge imported shortcuts with existing ones.</p>
+          <p>Backup and restore your GNOME shortcuts.</p>
         </div>
         <div class="feature">
           <h3>Lightweight</h3>
@@ -110,11 +106,17 @@
 # Export shortcuts to a JSON file
   gshortcuts export shortcuts.json
 
+# Export all shortcuts, by default it will only export the modified ones
+  gshortcuts export shortcuts.yaml --all
+
 # Import shortcuts from a YAML file
   gshortcuts import shortcuts.yaml
 
 # Import shortcuts from a JSON file
   gshortcuts import shortcuts.json
+
+# Reset custom shortcuts
+  gshortcuts reset-custom
           </code></pre>
     </section>
 
