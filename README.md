@@ -8,6 +8,7 @@
 
 - [Overview](#overview)
 - [Features](#features)
+- [Dependencies](#dependencies)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Configuration File Format](#configuration-file-format)
@@ -21,14 +22,30 @@ This tool helps you manage your keyboard shortcuts in GNOME-based desktop enviro
 
 ## Features
 
-- Fast and idempotent.
-- Manage both built-in and custom GNOME shortcuts.
+- Reliable and idempotent.
+- Manage both, built-in and custom GNOME shortcuts.
 - Native GIO Settings integration (no external processes).
 - No need to restart your GNOME session, changes take effect immediately.
 - Declarative config format: track changes easily with Git.
 - Supports both YAML and JSON.
 - Compatible with provisioning scripts or system setup automation.
 - Avoids manual DConf branch management, no need to export and merge multiple DConf paths when syncing shortcut settings.
+
+## Dependencies
+
+To build `gshortcuts` from source, you need GLib/GIO development headers installed.
+
+Debian/Ubuntu:
+
+```bash
+sudo apt install libglib2.0-dev pkg-config
+```
+
+Fedora:
+
+```bash
+sudo dnf install glib2-devel pkgconf-pkg-config
+```
 
 ## Installation
 
@@ -50,6 +67,10 @@ go install github.com/jpinilloslr/gshortcuts/cmd/gshortcuts@latest
 
 If you prefer to build from source or want to install a specific version from a clone:
 
+> ⚠️ Requires development headers for GLib and GIO.  
+> On Debian/Ubuntu: `sudo apt install libglib2.0-dev pkg-config`
+> On Fedora: sudo dnf install glib2-devel pkgconf-pkg-config
+
 1.  Clone the repository:
     ```bash
     git clone https://github.com/jpinilloslr/gshortcuts.git
@@ -69,11 +90,7 @@ If you prefer to build from source or want to install a specific version from a 
 
 The main command is `gshortcuts`.
 
-```
-A command line tool to manage your shortcuts in GNOME
-```
-
-### Commands
+### Subcommands
 
 - `import`: Imports shortcuts from a specified file.
 
