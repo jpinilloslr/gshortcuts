@@ -52,14 +52,14 @@ func (i *Importer) Import(fileName string, strategy ImportStrategy, verbose bool
 	return nil
 }
 
-func (i *Importer) Reset() error {
-	if !confirm("This will delete all existing shortcuts. Do you want to continue?") {
+func (i *Importer) ResetCustomShortcuts() error {
+	if !confirm("This will delete all existing custom shortcuts. Do you want to continue?") {
 		return fmt.Errorf("Aborded")
 	}
 
 	if err := i.manager.ResetCustomShortcuts(); err != nil {
 		return err
 	}
-	fmt.Println("Deleted all existing shortcuts")
+	fmt.Println("Reset all custom shortcuts")
 	return nil
 }
