@@ -8,8 +8,8 @@
 
 - [Overview](#overview)
 - [Features](#features)
-- [Dependencies](#dependencies)
 - [Installation](#installation)
+- [Dependencies](#dependencies)
 - [Usage](#usage)
 - [Configuration File Format](#configuration-file-format)
 - [License](#license)
@@ -30,22 +30,6 @@ This tool helps you manage your keyboard shortcuts in GNOME-based desktop enviro
 - Supports both YAML and JSON.
 - Compatible with provisioning scripts or system setup automation.
 - Avoids manual DConf branch management, no need to export and merge multiple DConf paths when syncing shortcut settings.
-
-## Dependencies
-
-To build `gshortcuts` from source, you need GLib/GIO development headers installed.
-
-Debian/Ubuntu:
-
-```bash
-sudo apt install libglib2.0-dev pkg-config
-```
-
-Fedora:
-
-```bash
-sudo dnf install glib2-devel pkgconf-pkg-config
-```
 
 ## Installation
 
@@ -81,6 +65,22 @@ If you prefer to build from source or want to install a specific version from a 
     ```bash
     make build
     ```
+
+## Dependencies
+
+To build `gshortcuts` from source, you need GLib/GIO development headers installed.
+
+Debian/Ubuntu:
+
+```bash
+sudo apt install libglib2.0-dev pkg-config
+```
+
+Fedora:
+
+```bash
+sudo dnf install glib2-devel pkgconf-pkg-config
+```
 
 ## Usage
 
