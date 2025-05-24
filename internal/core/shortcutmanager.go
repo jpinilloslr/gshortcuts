@@ -75,36 +75,6 @@ func (s *ShortcutManager) SetBuiltInShortcuts(
 	return nil
 }
 
-func (s *ShortcutManager) getBuiltInShortcutsFromSchema(
-	settings *gsettings.GSettings,
-	modifiedOnly bool,
-) ([]BuiltInShortcut, error) {
-	keys, err := settings.ListKeys()
-	if err != nil {
-		return nil, err
-	}
-
-	shortcuts := []BuiltInShortcut{}
-	for _, key := range keys {
-		if modifiedOnly {
-			mod, err := settings.IsKeyModified(key)
-			if err != nil {
-				return nil, err
-			}
-			if !mod {
-				continue
-			}
-		}
-
-		shortcuts = append(shortcuts, BuiltInShortcut{
-			Key:      key,
-			Bindings: settings.GetStringArray(key),
-		})
-	}
-
-	return shortcuts, nil
-}
-
 func (s *ShortcutManager) GetCustomShortcuts() ([]CustomShortcut, error) {
 	settings, err := gsettings.New(customBaseSchema)
 	if err != nil {
@@ -143,6 +113,48 @@ func (s *ShortcutManager) SetCustomShortcuts(shortcuts []CustomShortcut) error {
 	return nil
 }
 
+func (s *ShortcutManager) ResetCustomShortcuts() error {
+	settings, err := gsettings.New(customBaseSchema)
+	if err != nil {
+		return err
+	}
+	defer settings.Close()
+
+	settings.Reset(customKeyBindings)
+	settings.Sync()
+	return nil
+}
+
+func (s *ShortcutManager) getBuiltInShortcutsFromSchema(
+	settings *gsettings.GSettings,
+	modifiedOnly bool,
+) ([]BuiltInShortcut, error) {
+	keys, err := settings.ListKeys()
+	if err != nil {
+		return nil, err
+	}
+
+	shortcuts := []BuiltInShortcut{}
+	for _, key := range keys {
+		if modifiedOnly {
+			mod, err := settings.IsKeyModified(key)
+			if err != nil {
+				return nil, err
+			}
+			if !mod {
+				continue
+			}
+		}
+
+		shortcuts = append(shortcuts, BuiltInShortcut{
+			Key:      key,
+			Bindings: settings.GetStringArray(key),
+		})
+	}
+
+	return shortcuts, nil
+}
+
 func (s *ShortcutManager) setCustomShortcut(
 	settings *gsettings.GSettings,
 	shortcut *CustomShortcut,
@@ -161,18 +173,6 @@ func (s *ShortcutManager) setCustomShortcut(
 	if err := s.setParams(newPath, shortcut); err != nil {
 		return err
 	}
-	return nil
-}
-
-func (s *ShortcutManager) ResetCustomShortcuts() error {
-	settings, err := gsettings.New(customBaseSchema)
-	if err != nil {
-		return err
-	}
-	defer settings.Close()
-
-	settings.Reset(customKeyBindings)
-	settings.Sync()
 	return nil
 }
 
