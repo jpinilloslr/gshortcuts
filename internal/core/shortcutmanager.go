@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"slices"
 
+	"github.com/jpinilloslr/gshortcuts/internal/console"
 	"github.com/jpinilloslr/gshortcuts/internal/gsettings"
 )
 
@@ -28,13 +29,14 @@ func NewShortcutManager() *ShortcutManager {
 
 func (s *ShortcutManager) GetBuiltInShortcuts(
 	modifiedOnly bool,
-) (map[string][]BuiltInShortcut, error) {
+) map[string][]BuiltInShortcut {
 	result := map[string][]BuiltInShortcut{}
 
 	for _, schema := range builtInSchemas {
 		settings, err := gsettings.New(schema)
 		if err != nil {
-			return nil, err
+			console.PrintWarning("Couldn't create gsettings for schema %s: %v", schema, err)
+			continue
 		}
 		defer settings.Close()
 
@@ -43,7 +45,8 @@ func (s *ShortcutManager) GetBuiltInShortcuts(
 			modifiedOnly,
 		)
 		if err != nil {
-			return nil, err
+			console.PrintWarning("Couldn't read shortcuts from schema %s: %v\n", schema, err)
+			continue
 		}
 
 		if len(shortcuts) > 0 {
@@ -51,28 +54,37 @@ func (s *ShortcutManager) GetBuiltInShortcuts(
 		}
 	}
 
-	return result, nil
+	return result
 }
 
 func (s *ShortcutManager) SetBuiltInShortcuts(
 	schema string,
 	shortcuts []BuiltInShortcut,
-) error {
+) int {
+	imported := 0
 	settings, err := gsettings.New(schema)
 	if err != nil {
-		return err
+		console.PrintWarning("Couldn't create gsettings for schema %s: %v", schema, err)
+		return imported
 	}
 	defer settings.Close()
 
 	for _, current := range shortcuts {
 		err := settings.SetStringArray(current.Key, current.Bindings)
 		if err != nil {
-			return err
+			console.PrintWarning(
+				"Couldn't write shortcut %s for schema %s: %v",
+				current.Key,
+				schema,
+				err,
+			)
+			continue
 		}
+		imported++
 	}
 
 	settings.Sync()
-	return nil
+	return imported
 }
 
 func (s *ShortcutManager) GetCustomShortcuts() ([]CustomShortcut, error) {

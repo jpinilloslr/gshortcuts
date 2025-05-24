@@ -1,4 +1,4 @@
-package core
+package console
 
 import (
 	"bufio"
@@ -9,7 +9,7 @@ import (
 	"github.com/fatih/color"
 )
 
-func confirm(prompt string) bool {
+func Confirm(prompt string) bool {
 	reader := bufio.NewReader(os.Stdin)
 	for {
 		fmt.Printf(
@@ -27,4 +27,20 @@ func confirm(prompt string) bool {
 			fmt.Println("Please type y or n and hit enter.")
 		}
 	}
+}
+
+func PrintWarning(format string, a ...any) {
+	fmt.Printf(
+		"%s %s\n",
+		color.YellowString("⚠️ "),
+		fmt.Sprintf(format, a...),
+	)
+}
+
+func PrintError(format string, a ...any) {
+	fmt.Printf(
+		"%s %s\n",
+		color.RedString("❌ "),
+		fmt.Sprintf(format, a...),
+	)
 }
