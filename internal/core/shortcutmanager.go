@@ -9,8 +9,15 @@ import (
 )
 
 const customKeyBindings = "custom-keybindings"
-const baseSchema = "org.gnome.settings-daemon.plugins.media-keys"
-const basePath = "/org/gnome/settings-daemon/plugins/media-keys"
+const customBaseSchema = "org.gnome.settings-daemon.plugins.media-keys"
+const customBasePath = "/org/gnome/settings-daemon/plugins/media-keys"
+
+var builtInSchemas = [...]string{
+	"org.gnome.desktop.wm.keybindings",
+	"org.gnome.mutter.keybindings",
+	"org.gnome.mutter.wayland.keybindings",
+	"org.gnome.shell.keybindings",
+}
 
 type ShortcutManager struct {
 }
@@ -22,15 +29,9 @@ func NewShortcutManager() *ShortcutManager {
 func (s *ShortcutManager) GetBuiltInShortcuts(
 	modifiedOnly bool,
 ) (map[string][]BuiltInShortcut, error) {
-	schemas := []string{
-		"org.gnome.desktop.wm.keybindings",
-		"org.gnome.mutter.keybindings",
-		"org.gnome.mutter.wayland.keybindings",
-		"org.gnome.shell.keybindings",
-	}
 	result := map[string][]BuiltInShortcut{}
 
-	for _, schema := range schemas {
+	for _, schema := range builtInSchemas {
 		settings, err := gsettings.New(schema)
 		if err != nil {
 			return nil, err
@@ -51,6 +52,27 @@ func (s *ShortcutManager) GetBuiltInShortcuts(
 	}
 
 	return result, nil
+}
+
+func (s *ShortcutManager) SetBuiltInShortcuts(
+	schema string,
+	shortcuts []BuiltInShortcut,
+) error {
+	settings, err := gsettings.New(schema)
+	if err != nil {
+		return err
+	}
+	defer settings.Close()
+
+	for _, current := range shortcuts {
+		err := settings.SetStringArray(current.Key, current.Bindings)
+		if err != nil {
+			return err
+		}
+	}
+
+	settings.Sync()
+	return nil
 }
 
 func (s *ShortcutManager) getBuiltInShortcutsFromSchema(
@@ -84,7 +106,7 @@ func (s *ShortcutManager) getBuiltInShortcutsFromSchema(
 }
 
 func (s *ShortcutManager) GetCustomShortcuts() ([]CustomShortcut, error) {
-	settings, err := gsettings.New(baseSchema)
+	settings, err := gsettings.New(customBaseSchema)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +127,7 @@ func (s *ShortcutManager) GetCustomShortcuts() ([]CustomShortcut, error) {
 }
 
 func (s *ShortcutManager) SetCustomShortcuts(shortcuts []CustomShortcut) error {
-	settings, err := gsettings.New(baseSchema)
+	settings, err := gsettings.New(customBaseSchema)
 	if err != nil {
 		return err
 	}
@@ -125,7 +147,7 @@ func (s *ShortcutManager) setCustomShortcut(
 	settings *gsettings.GSettings,
 	shortcut *CustomShortcut,
 ) error {
-	newPath := fmt.Sprintf("%s/%s/", basePath, shortcut.Id)
+	newPath := fmt.Sprintf("%s/%s/", customBasePath, shortcut.Id)
 	paths := settings.GetStringArray(customKeyBindings)
 
 	if !slices.Contains(paths, newPath) {
@@ -143,7 +165,7 @@ func (s *ShortcutManager) setCustomShortcut(
 }
 
 func (s *ShortcutManager) ResetCustomShortcuts() error {
-	settings, err := gsettings.New(baseSchema)
+	settings, err := gsettings.New(customBaseSchema)
 	if err != nil {
 		return err
 	}
@@ -155,7 +177,7 @@ func (s *ShortcutManager) ResetCustomShortcuts() error {
 }
 
 func (s *ShortcutManager) setParams(path string, shortcut *CustomShortcut) error {
-	schema := fmt.Sprintf("%s.%s", baseSchema, "custom-keybinding")
+	schema := fmt.Sprintf("%s.%s", customBaseSchema, "custom-keybinding")
 
 	settings, err := gsettings.NewWithPath(schema, path)
 	if err != nil {
@@ -179,7 +201,7 @@ func (s *ShortcutManager) setParams(path string, shortcut *CustomShortcut) error
 }
 
 func (s *ShortcutManager) getCustomShortcut(path string) (*CustomShortcut, error) {
-	schema := fmt.Sprintf("%s.%s", baseSchema, "custom-keybinding")
+	schema := fmt.Sprintf("%s.%s", customBaseSchema, "custom-keybinding")
 
 	settings, err := gsettings.NewWithPath(schema, path)
 	if err != nil {
