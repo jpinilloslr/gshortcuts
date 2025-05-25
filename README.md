@@ -9,7 +9,7 @@
 - [Overview](#overview)
 - [Features](#features)
 - [Installation](#installation)
-- [Dependencies](#dependencies)
+- [Native Libs](#native-libs)
 - [Usage](#usage)
 - [Configuration File Format](#configuration-file-format)
 - [Reporting Issues](#reporting-issues)
@@ -67,7 +67,7 @@ If you prefer to build from source or want to install a specific version from a 
     make build
     ```
 
-## Dependencies
+## Native Libs
 
 To build `gshortcuts` from source, you need GLib/GIO development headers installed.
 
