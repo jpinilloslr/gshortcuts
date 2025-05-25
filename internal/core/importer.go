@@ -56,14 +56,15 @@ func (i *Importer) Import(fileName string, verbose bool) error {
 	return nil
 }
 
-func (i *Importer) ResetCustomShortcuts() error {
-	if !console.Confirm("This will delete all existing custom shortcuts. Do you want to continue?") {
+func (i *Importer) ResetCustomShortcuts(skipCofirmation bool) error {
+	if !skipCofirmation &&
+		!console.Confirm("This will delete existing custom shortcuts. Do you want to continue?") {
 		return fmt.Errorf("Aborded")
 	}
 
 	if err := i.manager.ResetCustomShortcuts(); err != nil {
 		return err
 	}
-	fmt.Println("Reset all custom shortcuts")
+	fmt.Printf("%s Reset custom shortcuts\n", color.GreenString("✔"))
 	return nil
 }
