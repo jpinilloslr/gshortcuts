@@ -5,6 +5,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var skipConfirmation bool
+
 var resetCustomCmd = &cobra.Command{
 	Use:   "reset-custom",
 	Short: "Reset custom shortcuts",
@@ -14,10 +16,17 @@ var resetCustomCmd = &cobra.Command{
 }
 
 func init() {
+	resetCustomCmd.Flags().BoolVarP(
+		&skipConfirmation,
+		"assumeyes",
+		"y",
+		false,
+		"Skip confirmation prompt",
+	)
 	rootCmd.AddCommand(resetCustomCmd)
 }
 
 func resetShortcuts() error {
 	importer := core.NewImporter()
-	return importer.ResetCustomShortcuts()
+	return importer.ResetCustomShortcuts(skipConfirmation)
 }
