@@ -4,6 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://github.com/jpinilloslr/gshortcuts/actions/workflows/build.yaml/badge.svg?branch=master)](https://github.com/jpinilloslr/gshortcuts/actions/workflows/build.yaml)
 
+[![asciicast](https://asciinema.org/a/up9uGztCjiRJCvV1N4qkXLXZA.svg)](https://asciinema.org/a/up9uGztCjiRJCvV1N4qkXLXZA)
+
 ## Table of Contents
 
 - [Overview](#overview)
