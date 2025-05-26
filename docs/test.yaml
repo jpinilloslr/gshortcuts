@@ -1,66 +1,66 @@
 builtin:
-    org.gnome.desktop.wm.keybindings:
-        - key: switch-windows-backward
-          bindings:
-            - <Shift><Alt>Tab
-        - key: switch-to-workspace-1
-          bindings:
-            - <Super>1
-        - key: switch-windows
-          bindings:
-            - <Alt>Tab
-        - key: switch-to-workspace-2
-          bindings:
-            - <Super>2
-        - key: switch-applications
-          bindings: []
-        - key: switch-to-workspace-3
-          bindings:
-            - <Super>3
-        - key: switch-to-workspace-4
-          bindings:
-            - <Super>4
-        - key: switch-applications-backward
-          bindings: []
-    org.gnome.shell.keybindings:
-        - key: switch-to-application-1
-          bindings: []
-        - key: switch-to-application-4
-          bindings: []
-        - key: switch-to-application-2
-          bindings: []
-        - key: switch-to-application-3
-          bindings: []
+  org.gnome.desktop.wm.keybindings:
+    - key: switch-windows-backward
+      bindings:
+        - <Shift><Alt>Tab
+    - key: switch-to-workspace-1
+      bindings:
+        - <Super>1
+    - key: switch-windows
+      bindings:
+        - <Alt>Tab
+    - key: switch-to-workspace-2
+      bindings:
+        - <Super>2
+    - key: switch-applications
+      bindings: []
+    - key: switch-to-workspace-3
+      bindings:
+        - <Super>3
+    - key: switch-to-workspace-4
+      bindings:
+        - <Super>4
+    - key: switch-applications-backward
+      bindings: []
+  org.gnome.shell.keybindings:
+    - key: switch-to-application-1
+      bindings: []
+    - key: switch-to-application-4
+      bindings: []
+    - key: switch-to-application-2
+      bindings: []
+    - key: switch-to-application-3
+      bindings: []
 custom:
-    - id: alacritty
-      name: Alacritty
-      binding: <Shift><Control>t
-      command: alacritty
-    - id: alacritty-tmux
-      name: Alacritty & Tmux
-      binding: <Alt><Control>t
-      command: alacritty -e tmux
-    - id: deutsch-dict
-      name: Add Word to Deutsch Dict
-      binding: <Control><Alt>w
-      command: sh -c "wl-paste --primary >> ~/.de_dict.txt && notify-send -e -a \"Deutsch Dictionary\" \"Added $(wl-paste --primary) to Deutsch Dict\""
-    - id: correct-selected-text
-      name: Correct selected text
-      binding: <Super>c
-      command: actionai run -m gpt-4.1-mini -i selected-text -o clipboard -n "Correct this text. Reply only the corrected text. Keep the same style."
-    - id: translate-text-from-german
-      name: Translate text from German
-      binding: <Super>t
-      command: actionai run -m gpt-4.1-mini -i selected-text -o window -n "Traduce esto del Aleman al Español. Explica brevemente la estructura si es una frase. Si es un sustantivo comenta el género."
-    - id: translate-screen-section-from-german
-      name: Translate screen section from German
-      binding: <Super><Shift>t
-      command: actionai run -m gpt-4.1-mini -i screen-section -o window -n "Traduce esto del Aleman al Español. Explica brevemente la estructura si es una frase. Si es un sustantivo comenta el género."
-    - id: ask-screen-section-with-voice
-      name: Ask screen section with voice
-      binding: <Super><Shift>a
-      command: actionai run -m gpt-4.1-mini -i screen-section,voice -o window
-    - id: ask-with-voice
-      name: Ask with voice
-      binding: <Super><Control>v
-      command: actionai run -m gpt-4.1-mini -i voice -o voice
+  - id: alacritty
+    name: Alacritty
+    binding: <Shift><Control>t
+    command: alacritty
+  - id: alacritty-tmux
+    name: Alacritty & Tmux
+    binding: <Alt><Control>t
+    command: alacritty -e tmux
+  - id: deutsch-dict
+    name: Add Word to Deutsch Dict
+    binding: <Control><Alt>w
+    command: sh -c "wl-paste --primary >> ~/.de_dict.txt && notify-send -e -a \"Deutsch Dictionary\" \"Added $(wl-paste --primary) to Deutsch Dict\""
+  - id: correct-selected-text
+    name: Correct selected text
+    binding: <Super>c
+    command: actionai run -m gpt-4.1-mini -i selected-text -o clipboard -n "Correct this text. Reply only the corrected text. Keep the same style."
+  - id: translate-text-from-german
+    name: Translate text from German
+    binding: <Super>t
+    command: actionai run -m gpt-4.1-mini -i selected-text -o window -n "Traduce esto del Aleman al Español. Explica brevemente la estructura si es una frase. Si es un sustantivo comenta el género."
+  - id: translate-screen-section-from-german
+    name: Translate screen section from German
+    binding: <Super><Shift>t
+    command: actionai run -m gpt-4.1-mini -i screen-section -o window -n "Traduce esto del Aleman al Español. Explica brevemente la estructura si es una frase. Si es un sustantivo comenta el género."
+  - id: ask-screen-section-with-voice
+    name: Ask screen section with voice
+    binding: <Super><Shift>a
+    command: actionai run -m gpt-4.1-mini -i screen-section,voice -o window
+  - id: ask-with-voice
+    name: Ask with voice
+    binding: <Super><Control>v
+    command: actionai run -m gpt-4.1-mini -i voice -o voice

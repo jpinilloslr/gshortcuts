@@ -15,16 +15,15 @@
 - [Reporting Issues](#reporting-issues)
 - [License](#license)
 
-`gshortcuts` is a command-line tool to import, export, and declaratively manage GNOME built-in and custom keyboard shortcuts.
-
 ## Overview
 
-This tool helps you manage your keyboard shortcuts in GNOME-based desktop environments. You can define your shortcuts in a YAML or JSON file and import them using `gshortcuts`.
+This tool helps you manage your keyboard shortcuts in GNOME-based desktop environments. You can define your shortcuts in a declarative YAML or JSON file and import them using `gshortcuts`.
 
 ## Features
 
 - Reliable and idempotent.
 - Manage both, built-in and custom GNOME shortcuts.
+- Detect duplicate shortcuts.
 - Native GIO Settings integration (no external processes).
 - No need to restart your GNOME session, changes take effect immediately.
 - Declarative config format: track changes easily with Git.
@@ -102,6 +101,8 @@ The main command is `gshortcuts`.
   gshortcuts export /path/to/your/shortcuts.yaml
   gshortcuts export /path/to/your/shortcuts.json
   ```
+
+- `conflicts`: Checks for duplicate shortcuts.
 
 - `reset-custom`: Resets all custom shortcuts.
 
